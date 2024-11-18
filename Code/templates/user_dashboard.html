@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/user_dashboard_style.css">
+    <title>User Dashboard</title>
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <div class="logo">
+                <img src="../static/IITM_logo.png" alt="College Logo">
+            </div>
+            <div class="college-details">
+                <div class="course-code">Library Management System</div>
+                <div class="course-name">User Dashboard</div>
+            </div>
+        </div>
+        <div class="links">
+            <a href="{{ url_for('user_my_books', username=session['username']) }}" class="link">My Books</a>
+            <a href="/user/dashboard" class="link">Books</a>
+            <a href="/logout" class="link">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="biography">
+            <div class="section-container">
+                {% for section in sections %}
+                <div class="section-box">
+                    <div class="section-box-content">
+                        <h3>{{ section['Name'] }}</h3>
+                        <p>Description: {{ section['Description'] }}</p>
+                        <p>Section ID: {{ section['ID'] }}</p>
+                        <p>Date Created: {{ section['DateCreated'] }}</p>
+                        <br>
+                    </div>
+                    <button class="view-section-button"
+                        onclick="window.location.href='/user/section_books/{{ section['ID'] }}'">View</button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="footer"></div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/user_book_style.css">
+    <title>Book Requests</title>
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <div class="logo">
+                <img src="/static/IITM_logo.png" alt="College Logo">
+            </div>
+            <div class="college-details">
+                <div class="course-code">Library Management System</div>
+                <div class="course-name">Librarian Dashboard</div>
+            </div>
+        </div>
+        <div class="links">
+            <a href="{{ url_for('user_my_books', username=session['username']) }}" class="link">My Books</a>
+            <a href="/user/dashboard" class="link">Books</a>
+            <a href="/logout" class="link">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="biography">
+            <div class="section-container">
+                <div class="table-box">
+                    <h1>My Books</h1>
+                    <table class="table-content">
+                        <thead>
+                            <tr>
+                                <th>Book Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for book in user_books %}
+                            <tr>
+                                <td>{{ book.book_name }}</td>
+                                <td>
+                                    <a href="{{ url_for('view_pdf', book_id=book.book_id) }}"><button class="view-btn">View</button></a>
+                                    <button class="return-btn">Return</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer"></div>
+</body>
+</html>

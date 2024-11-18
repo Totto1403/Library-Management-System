@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/librarian_request_process_style.css">
+    <title>Book Requests</title>
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <div class="logo">
+                <img src="../static/IITM_logo.png" alt="College Logo">
+            </div>
+            <div class="college-details">
+                <div class="course-code">Library Management System</div>
+                <div class="course-name">Librarian Dashboard</div>
+            </div>
+        </div>
+        <div class="links">
+            <a href="/librarian/dashboard" class="link">Section</a>
+            <a href="/librarian/process_request" class="link">Book Requests</a>
+            <a href="/librarian/new" class="link">Librarian</a>
+            <a href="/logout" class="link">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="biography">
+            <div class="section-container">
+                <div class="table-box">
+                    <h1>Book Requests</h1>
+                    <table class="table-content">
+                        <thead>
+                            <tr>
+                                <th>Book Name</th>
+                                <th>Requested By</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in requests %}
+                            <tr>
+                                <td>{{ request.book_name }}</td>
+                                <td>{{ request.requested_by }}</td>
+                                <td>
+                                    <form action="/librarian/process_request" method="post">
+                                        <input type="hidden" name="book_id" value="{{ request.book_id }}">
+                                        <input type="hidden" name="user_id" value="{{ request.user_id }}">
+                                        <button type="submit" name="action" value="accept" class="accept-btn">Accept</button>
+                                        <button type="submit" name="action" value="reject" class="reject-btn">Reject</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-box">
+                    <h1>Approved Requests</h1>
+                    <table class="table-content">
+                        <thead>
+                            <tr>
+                                <th>Book Name</th>
+                                <th>Requested By</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in approved_requests %}
+                            <tr>
+                                <td>{{ request.book_name }}</td>
+                                <td>{{ request.requested_by }}</td>
+                                <td>
+                                    <form action="/librarian/revoke_request/{{ request.book_id }}/{{ request.user_id }}"
+                                        method="post">
+                                        <button type="submit" name="action" value="revoke"
+                                            class="revoke-btn">Revoke</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer"></div>
+</body>
+</html>

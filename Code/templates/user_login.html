@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/bootstrap.css">
+    <link rel="stylesheet" href="../static/user_login_style.css">
+    <title>User Login</title>
+</head>
+
+<body>
+    <div class="card">
+        <h2 class="card-title">User Login</h2>
+        {% if error %}
+        <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endif %}
+        <form action="/user/login" method="post">
+            <div class="form-group">
+                <input type="text" class="form-control" name="username" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" name="password" placeholder="Password" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-login">Login</button>
+        </form>
+        <p><br>Don't have an account? <a href="/user/register">Register here</a></p>
+    </div>
+</body>
+</html>

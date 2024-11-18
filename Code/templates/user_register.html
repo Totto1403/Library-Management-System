@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/bootstrap.css">
+    <link rel="stylesheet" href="../static/user_register_style.css">
+    <title>User Register</title>
+</head>
+
+<body>
+    <div class="card">
+        <h2 class="card-title">Register</h2>
+        <form action="/user/register" method="post">
+            <div class="form-group">
+                <input type="text" class="form-control" name="username" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" name="password" placeholder="Password" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-register">Register</button>
+        </form>
+    </div>
+</body>
+</html>

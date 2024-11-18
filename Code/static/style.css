@@ -1,0 +1,73 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #d6a44d;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+}
+
+.footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    background-color: #d6a44d;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+}
+
+.biography {
+    max-width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+}
+
+h1,h2,h3,h4,h5,h6 {
+    color: #333;
+    font-family: 'Arial', sans-serif;
+}
+
+p {
+    color: #555;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    max-width: 100px;
+    margin-right: 10px;
+}
+
+.course-details {
+    text-align: center;
+}
+
+.course-code {
+    font-size: 24px;
+}
+
+.course-name {
+    font-size: 18px;
+}
+
+.links {
+    display: flex;
+    align-items: center;
+}
+
+.link {
+    margin-left: 20px;
+    text-decoration: none;
+    color: #fff;
+}
