@@ -14,19 +14,19 @@
 </div>
 
 <!-- Header Card -->
-<div class="card border-0 shadow-sm rounded-4 p-4 mb-4 text-white" style="background: linear-gradient(135deg, #0b2545 0%, #134074 100%); border-bottom: 3px solid var(--accent-gold);">
+<div class="card border-0 rounded-3 p-4 mb-4 text-white" style="background: linear-gradient(135deg, #0b2545 0%, #134074 100%); border-bottom: 3px solid #d97706;">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
         <div>
             <div class="d-flex align-items-center gap-2 mb-2">
-                <i class="bi {{ section.icon }} fs-2 text-warning"></i>
+                <i class="bi {{ section.icon }} fs-3 text-warning"></i>
                 <h2 class="fw-bold mb-0 text-white">{{ section.name }}</h2>
             </div>
-            <p class="mb-0 text-light lead" style="opacity: 0.9; max-width: 800px; font-size: 1rem;">
+            <p class="mb-0 text-white lead" style="color: #e2e8f0; max-width: 800px; font-size: 0.95rem;">
                 {{ section.description or 'Academic discipline curriculum section.' }}
             </p>
         </div>
         <div class="d-flex gap-2">
-            <button type="button" class="btn btn-gold btn-sm px-3 shadow" data-bs-toggle="modal" data-bs-target="#addBookModal">
+            <button type="button" class="btn btn-gold btn-sm px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#addBookModal">
                 <i class="bi bi-plus-lg me-1"></i> Upload New e-Book
             </button>
             <a href="{{ url_for('librarian_dashboard') }}" class="btn btn-outline-light btn-sm px-3">

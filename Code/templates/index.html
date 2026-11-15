@@ -4,33 +4,33 @@
 
 {% block content %}
 <!-- Hero Section -->
-<div class="p-5 mb-5 rounded-4 shadow-sm text-white" style="background: linear-gradient(135deg, #0b2545 0%, #134074 60%, #1d2d44 100%); border-bottom: 4px solid var(--accent-gold);">
+<div class="p-4 p-md-5 mb-4 rounded-3 text-white" style="background: linear-gradient(135deg, #0b2545 0%, #134074 100%); border-bottom: 3px solid #d97706;">
     <div class="row align-items-center">
         <div class="col-lg-8">
-            <span class="badge px-3 py-2 rounded-pill mb-3" style="background: rgba(197, 155, 39, 0.25); color: #ffd166; font-size: 0.9rem; border: 1px solid rgba(197, 155, 39, 0.5);">
+            <span class="badge px-3 py-1 rounded-pill mb-3" style="background: rgba(255, 255, 255, 0.15); color: #fde047; font-size: 0.85rem; border: 1px solid rgba(255, 255, 255, 0.25);">
                 <i class="bi bi-mortarboard-fill me-1"></i> IIT Madras Academic Resources
             </span>
-            <h1 class="display-4 fw-bold mb-3">Modern Digital Library & eBook Management</h1>
-            <p class="lead mb-4 text-light" style="opacity: 0.92; max-width: 650px;">
+            <h1 class="display-5 fw-bold mb-3 text-white">Modern Digital Library & eBook Management</h1>
+            <p class="lead mb-4" style="color: #e2e8f0; max-width: 650px; font-size: 1.05rem;">
                 Access curated lecture modules, research texts, and comprehensive courseware. Seamlessly borrow, read online, and review academic e-books with automated loan management.
             </p>
-            <div class="d-flex flex-wrap gap-3">
-                <a href="{{ url_for('login', role='user') }}" class="btn btn-gold btn-lg px-4 shadow">
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{{ url_for('login', role='user') }}" class="btn btn-gold btn-lg px-4 shadow-sm">
                     <i class="bi bi-box-arrow-in-right me-2"></i> Student Portal
                 </a>
                 <a href="{{ url_for('login', role='librarian') }}" class="btn btn-outline-light btn-lg px-4">
                     <i class="bi bi-shield-lock me-2"></i> Librarian Portal
                 </a>
-                <a href="{{ url_for('register') }}" class="btn btn-link text-white text-decoration-none d-flex align-items-center">
+                <a href="{{ url_for('register') }}" class="btn btn-link text-white text-decoration-none d-flex align-items-center ms-md-2">
                     New Student? Register here <i class="bi bi-arrow-right ms-2"></i>
                 </a>
             </div>
         </div>
         <div class="col-lg-4 text-center d-none d-lg-block">
-            <div class="p-4 rounded-4" style="background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.15);">
-                <i class="bi bi-book-half" style="font-size: 5.5rem; color: var(--accent-gold);"></i>
+            <div class="p-4 rounded-3" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);">
+                <i class="bi bi-book-half" style="font-size: 4.5rem; color: #fde047;"></i>
                 <h5 class="mt-3 text-white fw-bold">7-Day Smart Lending</h5>
-                <p class="small text-light mb-0" style="opacity: 0.8;">Instant online reading, max 5 books per student, automatic returns & revocation.</p>
+                <p class="small mb-0" style="color: #cbd5e1;">Instant online reading, max 5 books per student, automatic returns & revocation.</p>
             </div>
         </div>
     </div>
@@ -168,7 +168,7 @@
 </div>
 
 <!-- Demo Accounts Guide Card for Evaluator / Grader -->
-<div class="card border-0 shadow-sm rounded-4 p-4" style="background: #eef4fb; border-left: 6px solid var(--primary-color) !important;">
+<div class="card border rounded-3 p-4 mb-3" style="background: #ffffff; border-color: var(--border-default) !important;">
     <div class="row align-items-center">
         <div class="col-md-8">
             <h5 class="fw-bold text-dark mb-2">
@@ -178,13 +178,13 @@
                 This project features complete role-based authentication, 5-book quota enforcement, 7-day auto-revocation, feedback & rating, and in-browser PDF reading.
             </p>
             <div class="d-flex flex-wrap gap-2 text-dark small">
-                <span class="badge bg-white text-dark border p-2">
+                <span class="badge bg-light text-dark border p-2">
                     <i class="bi bi-person-fill text-success me-1"></i> Student: <strong>Totto</strong> / <code>1403</code>
                 </span>
-                <span class="badge bg-white text-dark border p-2">
+                <span class="badge bg-light text-dark border p-2">
                     <i class="bi bi-person-fill text-success me-1"></i> Student 2: <strong>student1</strong> / <code>student123</code>
                 </span>
-                <span class="badge bg-white text-dark border p-2">
+                <span class="badge bg-light text-dark border p-2">
                     <i class="bi bi-shield-fill text-primary me-1"></i> Librarian: <strong>librarian</strong> / <code>password</code>
                 </span>
             </div>

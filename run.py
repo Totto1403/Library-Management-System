@@ -7,15 +7,14 @@ Student Roll No: 22f2000805
 import os
 import sys
 
-# Ensure Code directory is in python path and set as working directory
+# Ensure Code directory is in python path
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CODE_DIR = os.path.join(BASE_DIR, 'Code')
 if not os.path.isdir(CODE_DIR):
     CODE_DIR = os.path.join(BASE_DIR, '22f2000805_Project_Folder', 'Code')
 
-if os.path.isdir(CODE_DIR):
+if os.path.isdir(CODE_DIR) and CODE_DIR not in sys.path:
     sys.path.insert(0, CODE_DIR)
-    os.chdir(CODE_DIR)
 
 from LMS_app import app
 
