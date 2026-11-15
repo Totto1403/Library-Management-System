@@ -21,18 +21,18 @@
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('home') }}">
                 <img src="{{ url_for('static', filename='IITM_logo.png') }}" alt="IIT Madras Logo" class="brand-logo">
-                <span>IITM <span style="color: var(--accent-gold);">Library</span></span>
+                <span>IITM <span style="color: var(--brand-gold-400);">Library</span></span>
             </a>
 
-            <button class="navbar-toggler text-white border-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-                <i class="bi bi-list fs-3"></i>
+            <button class="navbar-toggler text-white border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="bi bi-list fs-2"></i>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarContent">
                 <!-- Search Form in Navbar -->
-                <form class="d-flex mx-auto my-2 my-lg-0 search-bar-wrap w-50" action="{{ url_for('search') }}" method="get">
+                <form class="d-flex mx-auto my-2 my-lg-0 search-bar-wrap w-50" action="{{ url_for('search') }}" method="get" role="search">
                     <i class="bi bi-search text-muted ps-1"></i>
-                    <input type="text" name="q" placeholder="Search books by title, author, or keywords..." value="{{ request.args.get('q', '') }}">
+                    <input type="text" name="q" placeholder="Search by title, author, or keyword..." value="{{ request.args.get('q', '') }}" aria-label="Search catalogue">
                 </form>
 
                 <ul class="navbar-nav ms-auto align-items-center gap-1">
@@ -48,7 +48,7 @@
                                 <a class="nav-link position-relative {% if request.endpoint == 'process_request_page' %}active{% endif %}" href="{{ url_for('process_request_page') }}">
                                     <i class="bi bi-inbox-fill me-1"></i> Requests
                                     {% if pending_requests_count > 0 %}
-                                    <span class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle">
+                                    <span class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle tabular-nums">
                                         {{ pending_requests_count }}
                                     </span>
                                     {% endif %}
@@ -78,7 +78,7 @@
                             </li>
                             <li class="nav-item ms-lg-2">
                                 <div class="quota-pill" title="Maximum 5 active books (issued + pending)">
-                                    <i class="bi bi-collection-fill"></i> Quota: {{ active_user_quota }} / 5
+                                    <i class="bi bi-collection-fill"></i> Quota: <span class="tabular-nums fw-bold ms-1">{{ active_user_quota }} / 5</span>
                                 </div>
                             </li>
                         {% endif %}
@@ -86,7 +86,7 @@
                         <!-- User Profile Dropdown -->
                         <li class="nav-item dropdown ms-lg-2">
                             <a class="nav-link dropdown-toggle text-white d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white fw-bold" style="width: 32px; height: 32px; font-size: 0.85rem;">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style="width: 32px; height: 32px; font-size: 0.85rem; background-color: var(--brand-navy-800); border: 1px solid rgba(255, 255, 255, 0.2);">
                                     {{ current_user.username[0].upper() }}
                                 </div>
                                 <span class="d-none d-md-inline">{{ current_user.full_name }}</span>
@@ -131,7 +131,7 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show shadow-sm d-flex align-items-center gap-2" role="alert">
+                    <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show shadow-sm d-flex align-items-center gap-2 border" role="alert">
                         {% if category == 'success' %}
                             <i class="bi bi-check-circle-fill text-success fs-5"></i>
                         {% elif category == 'danger' or category == 'error' %}

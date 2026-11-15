@@ -3,41 +3,47 @@
 {% block title %}Student Dashboard{% endblock %}
 
 {% block content %}
-<!-- Welcome & Quota Overview Banner -->
-<div class="row align-items-center mb-4">
-    <div class="col-md-7">
-        <h2 class="fw-bold text-dark mb-1">
-            Welcome, {{ user.full_name }}! 👋
+<!-- Welcome Banner & Ergonomic 5-Book Quota Meter -->
+<div class="row align-items-center mb-4 g-3">
+    <div class="col-lg-7">
+        <h2 class="fw-bold mb-1 text-dark">
+            Welcome, {{ user.full_name }}
         </h2>
-        <p class="text-secondary mb-0">Browse university courseware, request e-books, and manage your active loans.</p>
+        <p class="text-secondary mb-0">Browse university courseware, request digital e-books, and monitor active borrowing loans.</p>
     </div>
-    <div class="col-md-5 mt-3 mt-md-0">
-        <!-- 5-eBook Policy Quota Card -->
-        <div class="card border-0 shadow-sm p-3 rounded-4" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-left: 5px solid {% if user.active_quota_count >= 5 %}var(--danger-red){% else %}var(--primary-color){% endif %} !important;">
-            <div class="d-flex justify-content-between align-items-center mb-2">
+    <div class="col-lg-5">
+        <!-- Visual 5-Slot Quota Meter Card -->
+        <div class="quota-tracker-card">
+            <div class="d-flex justify-content-between align-items-center mb-1">
                 <span class="small fw-bold text-secondary text-uppercase tracking-wider">
-                    <i class="bi bi-collection-fill me-1 text-primary"></i> e-Book Borrowing Quota
+                    <i class="bi bi-collection-fill me-1 text-primary"></i> Borrowing Quota
                 </span>
-                <span class="badge {% if user.active_quota_count >= 5 %}bg-danger{% else %}bg-primary{% endif %} px-2 py-1">
+                <span class="badge {% if user.active_quota_count >= 5 %}bg-danger{% else %}bg-primary{% endif %} px-2 py-1 tabular-nums">
                     {{ user.active_quota_count }} / 5 Maximum
                 </span>
             </div>
-            
-            <!-- Progress Bar -->
-            <div class="progress mb-2" style="height: 8px;">
-                <div class="progress-bar {% if user.active_quota_count >= 5 %}bg-danger{% else %}bg-primary{% endif %}" role="progressbar" style="width: {{ (user.active_quota_count / 5.0) * 100 }}%;" aria-valuenow="{{ user.active_quota_count }}" aria-valuemin="0" aria-valuemax="5"></div>
+
+            <!-- 5-Segment Visual Slot Meter -->
+            <div class="quota-slots-meter" role="progressbar" aria-valuenow="{{ user.active_quota_count }}" aria-valuemin="0" aria-valuemax="5" aria-label="Book borrowing quota meter">
+                {% for slot_idx in range(5) %}
+                    {% if slot_idx < user.active_quota_count %}
+                        <div class="quota-slot {% if user.active_quota_count >= 5 %}slot-limit{% else %}slot-active{% endif %}" title="Occupied slot {{ slot_idx + 1 }}"></div>
+                    {% else %}
+                        <div class="quota-slot slot-empty" title="Available slot {{ slot_idx + 1 }}"></div>
+                    {% endif %}
+                {% endfor %}
             </div>
 
-            <div class="d-flex justify-content-between align-items-center small text-muted">
+            <div class="d-flex justify-content-between align-items-center small text-muted mt-2">
                 <span>
                     {% if user.active_quota_count >= 5 %}
-                        <strong class="text-danger"><i class="bi bi-exclamation-circle-fill me-1"></i>Quota full. Return a book to borrow.</strong>
+                        <strong class="text-danger"><i class="bi bi-exclamation-circle-fill me-1"></i>Quota full. Return a book to request another.</strong>
                     {% else %}
-                        <span><strong class="text-success">{{ 5 - user.active_quota_count }}</strong> slots remaining</span>
+                        <span><strong class="text-success tabular-nums">{{ 5 - user.active_quota_count }}</strong> slots available</span>
                     {% endif %}
                 </span>
                 <a href="{{ url_for('user_my_books') }}" class="text-primary fw-bold text-decoration-none">
-                    My Books <i class="bi bi-chevron-right"></i>
+                    My Books <i class="bi bi-chevron-right ms-1"></i>
                 </a>
             </div>
         </div>
@@ -46,15 +52,15 @@
 
 <!-- Quick Search Form -->
 <div class="card border-0 shadow-sm p-3 rounded-4 mb-5 bg-white">
-    <form action="{{ url_for('search') }}" method="get" class="row g-2 align-items-center">
+    <form action="{{ url_for('search') }}" method="get" class="row g-2 align-items-center" role="search">
         <div class="col-md-8">
             <div class="input-group">
                 <span class="input-group-text bg-light border-0"><i class="bi bi-search text-muted"></i></span>
-                <input type="text" name="q" class="form-control border-0 bg-light" placeholder="Search by book title, author, or keyword (e.g., Concurrency, Java, Operating Systems)...">
+                <input type="text" name="q" class="form-control border-0 bg-light" placeholder="Search by book title, author, or keyword (e.g. Concurrency, Java, Operating Systems)...">
             </div>
         </div>
         <div class="col-md-3">
-            <select name="section_id" class="form-select border-0 bg-light">
+            <select name="section_id" class="form-select border-0 bg-light" aria-label="Filter by curriculum section">
                 <option value="">All Academic Sections</option>
                 {% for sec in sections %}
                 <option value="{{ sec.id }}">{{ sec.name }}</option>
@@ -72,10 +78,10 @@
 <!-- Academic Sections Grid -->
 <div class="mb-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="fw-bold text-dark mb-0">
+        <h4 class="fw-bold mb-0">
             <i class="bi bi-folder2-open text-primary me-2"></i>Curriculum Sections
         </h4>
-        <span class="text-muted small">{{ sections|length }} Sections Available</span>
+        <span class="text-muted small tabular-nums">{{ sections|length }} Sections Available</span>
     </div>
 
     <div class="row g-4">
@@ -84,7 +90,7 @@
             <div class="section-card">
                 <div class="section-header d-flex justify-content-between align-items-center">
                     <i class="bi {{ section.icon }} fs-3 text-warning"></i>
-                    <span class="badge rounded-pill bg-white text-dark">{{ section.book_count }} e-Books</span>
+                    <span class="badge rounded-pill bg-white text-dark tabular-nums">{{ section.book_count }} e-Books</span>
                 </div>
                 <div class="section-body">
                     <h5 class="fw-bold mb-2 text-dark">{{ section.name }}</h5>
@@ -104,7 +110,7 @@
 <!-- Top Rated Courseware -->
 <div class="mb-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="fw-bold text-dark mb-0">
+        <h4 class="fw-bold mb-0">
             <i class="bi bi-star-fill text-warning me-2"></i>Top Rated Courseware
         </h4>
         <span class="text-muted small">Based on student feedback and reviews</span>
@@ -128,16 +134,16 @@
                         {{ book.content[:110] }}{% if book.content|length > 110 %}...{% endif %}
                     </p>
                     <div class="book-card-meta">
-                        <span><i class="bi bi-file-text me-1"></i>{{ book.pages }} pages</span>
+                        <span class="tabular-nums"><i class="bi bi-file-text me-1"></i>{{ book.pages }} pages</span>
                         <span>
                             <span class="star-rating">
                                 <i class="bi bi-star-fill"></i>
                             </span>
-                            <strong>{{ book.average_rating }}</strong> ({{ book.ratings_count }})
+                            <strong class="tabular-nums">{{ book.average_rating }}</strong> <span class="tabular-nums">({{ book.ratings_count }})</span>
                         </span>
                     </div>
 
-                    <!-- Action Button State based on User Loan Status & 5-Book Limit -->
+                    <!-- State-Aware Action Button based on User Loan Status & 5-Book Limit -->
                     {% if issue and issue.status == 'issued' %}
                         <a href="{{ url_for('view_pdf', book_id=book.id) }}" class="btn btn-success btn-sm w-100 mt-auto">
                             <i class="bi bi-book me-1"></i> Read Online
@@ -167,7 +173,7 @@
 <!-- Recently Added e-Books -->
 <div class="mb-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="fw-bold text-dark mb-0">
+        <h4 class="fw-bold mb-0">
             <i class="bi bi-clock-history text-primary me-2"></i>Recently Added to Catalogue
         </h4>
     </div>
@@ -190,12 +196,12 @@
                         {{ book.content[:110] }}{% if book.content|length > 110 %}...{% endif %}
                     </p>
                     <div class="book-card-meta">
-                        <span><i class="bi bi-file-text me-1"></i>{{ book.pages }} pages</span>
+                        <span class="tabular-nums"><i class="bi bi-file-text me-1"></i>{{ book.pages }} pages</span>
                         <span>
                             <span class="star-rating">
                                 <i class="bi bi-star-fill"></i>
                             </span>
-                            <strong>{{ book.average_rating }}</strong> ({{ book.ratings_count }})
+                            <strong class="tabular-nums">{{ book.average_rating }}</strong> <span class="tabular-nums">({{ book.ratings_count }})</span>
                         </span>
                     </div>
 

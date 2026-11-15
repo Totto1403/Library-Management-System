@@ -1,36 +1,66 @@
 {% extends "base.html" %}
 
-{% block title %}Reading: {{ book.title }}{% endblock %}
+{% block title %}Reading: {{ book.title }} | IITM Digital Library{% endblock %}
 
 {% block content %}
-<!-- Reader Top Navigation & Controls -->
-<div class="card border-0 shadow-sm rounded-4 p-3 mb-3 bg-white">
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+<div class="reader-shell">
+    <!-- Discreet Top Toolbar -->
+    <div class="reader-toolbar">
         <div class="d-flex align-items-center gap-3">
-            <a href="{% if current_user.is_librarian %}{{ url_for('section_books', section_id=book.section_id) }}{% else %}{{ url_for('user_my_books') }}{% endif %}" class="btn btn-outline-secondary btn-sm">
-                <i class="bi bi-arrow-left me-1"></i> Back to Shelf
+            <a href="{% if current_user.is_librarian %}{{ url_for('section_books', section_id=book.section_id) }}{% else %}{{ url_for('user_my_books') }}{% endif %}" class="btn btn-outline-secondary btn-sm" title="Back to Shelf">
+                <i class="bi bi-arrow-left me-1"></i> Shelf
             </a>
             <div>
-                <h5 class="fw-bold text-dark mb-0">{{ book.title }}</h5>
-                <small class="text-secondary"><i class="bi bi-person me-1"></i>{{ book.author }} &bull; {{ book.edition }} &bull; {{ book.section.name }}</small>
+                <h5 class="fw-bold mb-0 text-dark">{{ book.title }}</h5>
+                <small class="text-secondary">
+                    <i class="bi bi-person me-1"></i>{{ book.author }} &bull; {{ book.edition }} &bull; {{ book.section.name }} &bull; <span class="tabular-nums">{{ book.pages }} pages</span>
+                </small>
             </div>
         </div>
-        <div class="d-flex gap-2">
-            <a href="{{ url_for('download_pdf', book_id=book.id) }}" class="btn btn-primary btn-sm">
-                <i class="bi bi-download me-1"></i> Download PDF
+
+        <div class="d-flex align-items-center gap-2">
+            {% if not current_user.is_librarian %}
+                {% set user_loan = book.get_user_issue(current_user.id) %}
+                {% if user_loan and user_loan.due_date %}
+                    {% if user_loan.days_remaining > 2 %}
+                        <span class="badge-due badge-due-safe d-none d-md-inline-flex">
+                            <i class="bi bi-clock me-1"></i>{{ user_loan.days_remaining }} days remaining
+                        </span>
+                    {% elif user_loan.days_remaining > 0 %}
+                        <span class="badge-due badge-due-warning d-none d-md-inline-flex">
+                            <i class="bi bi-exclamation-triangle me-1"></i>Due in {{ user_loan.days_remaining }} day(s)
+                        </span>
+                    {% else %}
+                        <span class="badge-due badge-due-urgent d-none d-md-inline-flex">
+                            <i class="bi bi-exclamation-octagon me-1"></i>Due Today
+                        </span>
+                    {% endif %}
+
+                    <!-- Quick Return Button inside Reader -->
+                    <form action="{{ url_for('return_book', issue_id=user_loan.id) }}" method="post" class="d-inline" onsubmit="return confirm('Return {{ book.title }} and finish reading session?');">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Return Book to Library">
+                            <i class="bi bi-arrow-return-left me-1"></i> Return Book
+                        </button>
+                    </form>
+                {% endif %}
+            {% endif %}
+
+            <a href="{{ url_for('download_pdf', book_id=book.id) }}" class="btn btn-sm btn-outline-primary" title="Download Offline Copy">
+                <i class="bi bi-download me-1"></i> Download
             </a>
-            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="toggleFullScreen()">
+
+            <button type="button" class="btn btn-sm btn-primary" onclick="toggleFullScreen()" title="Toggle Fullscreen Reading">
                 <i class="bi bi-arrows-fullscreen me-1"></i> Fullscreen
             </button>
         </div>
     </div>
-</div>
 
-<!-- Embedded PDF View Frame -->
-<div class="card border-0 shadow-lg rounded-4 overflow-hidden" id="readerContainer">
-    <iframe src="{{ url_for('view_pdf', book_id=book.id, raw='true') }}#toolbar=1&navpanes=1&scrollbar=1" class="reader-frame-container" title="PDF Document Viewer">
-        <p>Your browser does not support inline PDF viewing. <a href="{{ url_for('download_pdf', book_id=book.id) }}">Download the eBook PDF directly</a>.</p>
-    </iframe>
+    <!-- Distraction-Free Embedded PDF Canvas -->
+    <div class="reader-canvas-card" id="readerContainer">
+        <iframe src="{{ url_for('view_pdf', book_id=book.id, raw='true') }}#toolbar=1&navpanes=1&scrollbar=1" class="reader-frame" title="PDF Document Viewer">
+            <p class="text-white p-4">Your browser does not support inline PDF viewing. <a href="{{ url_for('download_pdf', book_id=book.id) }}" class="text-warning">Download the eBook PDF directly</a>.</p>
+        </iframe>
+    </div>
 </div>
 {% endblock %}
 

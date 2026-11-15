@@ -16,20 +16,26 @@ The platform addresses manual book tracking, unsynchronized request pipelines, l
 
 ## 2. Key Features and Architectural Upgrades
 
+### Academic Design System and Visual Tokens
+- Tailored academic color tokens configured in `:root` (`--surface-base`, `--surface-card`, `--ink-primary`, `--ink-muted`, and `--brand-navy` / `--brand-gold`).
+- Standardized tabular numerals (`font-variant-numeric: tabular-nums`) applied across quota counters, remaining loan days, ISBN editions, page lengths, and dates for layout stability.
+- Accessible `:focus-visible` focus outlines, custom high-contrast scrollbars, and fluid transition kinetics.
+- Replaced generic AI-convergent typefaces with `Public Sans` and `Outfit` for distinguished academic authority and clarity.
+
 ### Role-Based Access Control and Authentication
 - Secure password hashing using PBKDF2-HMAC-SHA256 via Werkzeug security primitives. Plain-text credentials have been entirely eliminated.
 - Single unified user identity schema supporting distinct roles (`user` for students and `librarian` for administrative staff).
 - Route protection decorators (`@login_required`, `@librarian_required`, and `@user_required`) that guard against unauthorized access, privilege escalation, and URL tampering.
 - Role-specific navigation bars, profile badges, and dynamic flash alert notifications.
 
-### Strict 5-eBook Borrowing Quota
+### Strict 5-eBook Borrowing Quota and Visual Progress Meter
 - Hard enforcement of the mandatory institutional policy: a student can have a maximum of 5 active e-books (active loans plus pending requests).
-- Live quota tracking indicator displayed in the student header (`X / 5`).
+- Ergonomic 5-segment visual progress meter (`quota-slots-meter`) displaying filled vs. available allocation slots with live status indicators.
 - Proactive request prevention: when a student reaches 5 books, request actions are disabled at both the interface level and server-side validation with informative feedback.
 
 ### 7-Day Loan Duration and Automated Revocation Engine
-- Standard 7-day academic lending window assigned upon librarian approval, with custom durations supported for special reserve material.
-- Dynamic remaining-time badges (`Due in X days` or `Due Today`) on each borrowed title.
+- Standard 7-day academic lending window assigned upon librarian approval, with custom durations (7, 14, 21 days) supported via interactive duration pickers.
+- High-contrast urgency badges (`Due in X days`, `Due Today`, or `Overdue`) with distinct semantic color states on each borrowed title.
 - Automated revocation engine that sweeps active issues and automatically revokes access once a loan exceeds its due date, recording the expiration reason in audit logs.
 - Immediate restriction of online reading and downloading for expired or revoked titles.
 
@@ -44,15 +50,17 @@ The platform addresses manual book tracking, unsynchronized request pipelines, l
 - Contextual action buttons reflecting whether a book is available, already borrowed, pending review, or blocked by quota.
 
 ### In-Browser eBook Reader and Digital Assets
-- Built-in PDF reader (`reader.html`) with full-screen mode, eliminating the requirement for third-party client software.
+- Distraction-free, full-height (85vh) reading canvas (`reader.html`) with an integrated top control bar.
+- Live remaining loan timer, quick return trigger, digital download link, and full-screen toggle mode.
 - Verification of borrowing permissions before serving raw PDF streams or initiating downloads.
 - Storage of authentic lecture modules by Dr. Pradeep K V (*Operating Systems Architecture*, *Java and OS Principles*, *CPU Scheduling*, *Concurrency and Synchronization*).
 
 ### Administrative Management (Librarian Command Center)
-- Executive KPI dashboard displaying real-time metrics: Total e-Books, Sections, Active Loans, Pending Requests, Enrolled Students, and Revocations.
+- Executive KPI dashboard displaying real-time metrics with subtle background contrast: Total e-Books, Sections, Active Loans, Pending Requests, Enrolled Students, and Revocations.
+- Streamlined Request Processing Pipeline: Triage table with student avatar initials, quota indicators, one-click approvals, custom duration modals (7d/14d/21d), and decline modals with required reason notes.
+- Active loans management with immediate administrative revocation capability and detailed circulation audit history.
 - Full CRUD operations for Curriculum Sections (Create, Read, Update, Delete with safety checks).
 - Full CRUD operations for Books (Upload PDF, Edit Title, Author, Synopsis, Pages, Edition, Language, Reassign Section, Delete).
-- Request Processing Pipeline: Tabbed queues for Pending Requests (with single-click approve, custom duration, or decline with reason), Active Loans (with immediate revocation capability), and Circulation History.
 - Student Activity Monitor tracking individual quota utilization and reading history.
 
 ---

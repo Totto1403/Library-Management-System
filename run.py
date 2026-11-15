@@ -9,7 +9,9 @@ import sys
 
 # Ensure Code directory is in python path and set as working directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-CODE_DIR = os.path.join(BASE_DIR, '22f2000805_Project_Folder', 'Code')
+CODE_DIR = os.path.join(BASE_DIR, 'Code')
+if not os.path.isdir(CODE_DIR):
+    CODE_DIR = os.path.join(BASE_DIR, '22f2000805_Project_Folder', 'Code')
 
 if os.path.isdir(CODE_DIR):
     sys.path.insert(0, CODE_DIR)

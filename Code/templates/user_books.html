@@ -6,14 +6,14 @@
 <!-- Page Header -->
 <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
     <div>
-        <h2 class="fw-bold text-dark mb-1">
+        <h2 class="fw-bold mb-1 text-dark">
             <i class="bi bi-book-half text-primary me-2"></i>My e-Books & Borrowings
         </h2>
         <p class="text-secondary mb-0">Manage your active loans, track pending requests, and review reading history.</p>
     </div>
     <div>
         <span class="badge bg-white text-dark border p-2 px-3 rounded-pill shadow-sm">
-            <i class="bi bi-collection-fill text-primary me-1"></i> Current Quota: <strong>{{ user.active_quota_count }} / 5</strong>
+            <i class="bi bi-collection-fill text-primary me-1"></i> Current Quota: <strong class="tabular-nums ms-1">{{ user.active_quota_count }} / 5</strong>
         </span>
     </div>
 </div>
@@ -22,17 +22,17 @@
 <ul class="nav nav-tabs mb-4" id="bookshelfTabs" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active fw-bold py-3 px-4" id="active-tab" data-bs-toggle="tab" data-bs-target="#active-loans" type="button" role="tab" aria-controls="active-loans" aria-selected="true">
-            <i class="bi bi-check-circle-fill text-success me-1"></i> Active Loans ({{ active_loans|length }})
+            <i class="bi bi-check-circle-fill text-success me-1"></i> Active Loans <span class="tabular-nums ms-1">({{ active_loans|length }})</span>
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link fw-bold py-3 px-4 position-relative" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending-reqs" type="button" role="tab" aria-controls="pending-reqs" aria-selected="false">
-            <i class="bi bi-hourglass-split text-warning me-1"></i> Pending Requests ({{ pending_requests|length }})
+            <i class="bi bi-hourglass-split text-warning me-1"></i> Pending Requests <span class="tabular-nums ms-1">({{ pending_requests|length }})</span>
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link fw-bold py-3 px-4" id="history-tab" data-bs-toggle="tab" data-bs-target="#past-history" type="button" role="tab" aria-controls="past-history" aria-selected="false">
-            <i class="bi bi-clock-history text-secondary me-1"></i> History & Reviews ({{ past_history|length }})
+            <i class="bi bi-clock-history text-secondary me-1"></i> History & Reviews <span class="tabular-nums ms-1">({{ past_history|length }})</span>
         </button>
     </li>
 </ul>
@@ -50,7 +50,7 @@
                             <th>Book Details</th>
                             <th>Section</th>
                             <th>Issued On</th>
-                            <th>Due Date & Expiry</th>
+                            <th>Due Date & Urgency</th>
                             <th class="text-end">Actions</th>
                         </tr>
                     </thead>
@@ -72,21 +72,21 @@
                                 <span class="badge bg-light text-dark border">{{ loan.book.section.name }}</span>
                             </td>
                             <td>
-                                <small class="text-dark">{{ loan.issue_date.strftime('%d %b %Y') if loan.issue_date else 'N/A' }}</small>
+                                <span class="tabular-nums text-dark">{{ loan.issue_date.strftime('%d %b %Y') if loan.issue_date else 'N/A' }}</span>
                             </td>
                             <td>
                                 {% if loan.due_date %}
-                                    <div class="fw-semibold text-dark">{{ loan.due_date.strftime('%d %b %Y') }}</div>
+                                    <div class="fw-semibold text-dark tabular-nums">{{ loan.due_date.strftime('%d %b %Y') }}</div>
                                     {% if loan.days_remaining > 2 %}
-                                        <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                        <span class="badge-due badge-due-safe">
                                             <i class="bi bi-clock me-1"></i>{{ loan.days_remaining }} days remaining
                                         </span>
                                     {% elif loan.days_remaining > 0 %}
-                                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle">
+                                        <span class="badge-due badge-due-warning">
                                             <i class="bi bi-exclamation-triangle me-1"></i>Due in {{ loan.days_remaining }} day(s)
                                         </span>
                                     {% else %}
-                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                                        <span class="badge-due badge-due-urgent">
                                             <i class="bi bi-exclamation-octagon me-1"></i>Due Today / Expiring
                                         </span>
                                     {% endif %}
@@ -150,7 +150,7 @@
                                 <small class="text-secondary">{{ req.book.author }}</small>
                             </td>
                             <td><span class="badge bg-light text-dark border">{{ req.book.section.name }}</span></td>
-                            <td><small>{{ req.request_date.strftime('%d %b %Y, %H:%M') }}</small></td>
+                            <td><span class="tabular-nums">{{ req.request_date.strftime('%d %b %Y, %H:%M') }}</span></td>
                             <td>
                                 <span class="badge bg-warning text-dark">
                                     <i class="bi bi-clock-history me-1"></i> Awaiting Librarian Approval
@@ -202,9 +202,9 @@
                                 <small class="text-secondary">{{ hist.book.author }}</small>
                             </td>
                             <td>
-                                <small class="d-block text-secondary">Requested: {{ hist.request_date.strftime('%d %b %Y') }}</small>
+                                <small class="d-block text-secondary tabular-nums">Requested: {{ hist.request_date.strftime('%d %b %Y') }}</small>
                                 {% if hist.return_date %}
-                                    <small class="d-block text-dark fw-semibold">Closed: {{ hist.return_date.strftime('%d %b %Y') }}</small>
+                                    <small class="d-block text-dark fw-semibold tabular-nums">Closed: {{ hist.return_date.strftime('%d %b %Y') }}</small>
                                 {% endif %}
                             </td>
                             <td>
@@ -244,14 +244,13 @@
                                 {% endif %}
                             </td>
                             <td class="text-end">
-                                <!-- Trigger Feedback Modal -->
                                 <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#feedbackModal{{ hist.book_id }}">
                                     <i class="bi bi-pencil-square me-1"></i> {% if fb %}Edit Review{% else %}Leave Review{% endif %}
                                 </button>
                             </td>
                         </tr>
 
-                        <!-- Feedback Modal for this book -->
+                        <!-- Feedback Modal -->
                         <div class="modal fade" id="feedbackModal{{ hist.book_id }}" tabindex="-1" aria-labelledby="modalLabel{{ hist.book_id }}" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content rounded-4 border-0 shadow">
@@ -266,11 +265,11 @@
                                             <div class="mb-3">
                                                 <label class="form-label fw-semibold">Star Rating (1 to 5 Stars)</label>
                                                 <select name="rating" class="form-select">
-                                                    <option value="5" {% if fb and fb.rating == 5 %}selected{% endif %}>⭐⭐⭐⭐⭐ (5 Stars - Excellent)</option>
-                                                    <option value="4" {% if fb and fb.rating == 4 %}selected{% endif %}>⭐⭐⭐⭐ (4 Stars - Very Good)</option>
-                                                    <option value="3" {% if fb and fb.rating == 3 %}selected{% endif %}>⭐⭐⭐ (3 Stars - Good)</option>
-                                                    <option value="2" {% if fb and fb.rating == 2 %}selected{% endif %}>⭐⭐ (2 Stars - Fair)</option>
-                                                    <option value="1" {% if fb and fb.rating == 1 %}selected{% endif %}>⭐ (1 Star - Needs Improvement)</option>
+                                                    <option value="5" {% if fb and fb.rating == 5 %}selected{% endif %}>5 Stars (Excellent)</option>
+                                                    <option value="4" {% if fb and fb.rating == 4 %}selected{% endif %}>4 Stars (Very Good)</option>
+                                                    <option value="3" {% if fb and fb.rating == 3 %}selected{% endif %}>3 Stars (Good)</option>
+                                                    <option value="2" {% if fb and fb.rating == 2 %}selected{% endif %}>2 Stars (Fair)</option>
+                                                    <option value="1" {% if fb and fb.rating == 1 %}selected{% endif %}>1 Star (Needs Improvement)</option>
                                                 </select>
                                             </div>
                                             <div class="mb-3">

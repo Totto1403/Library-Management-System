@@ -6,7 +6,7 @@
 <!-- Page Header -->
 <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
     <div>
-        <h2 class="fw-bold text-dark mb-1">
+        <h2 class="fw-bold mb-1 text-dark">
             <i class="bi bi-inbox-fill text-primary me-2"></i>Borrowing Request & Loan Manager
         </h2>
         <p class="text-secondary mb-0">Review student applications, issue digital loan licenses, and monitor circulation.</p>
@@ -26,24 +26,24 @@
         <button class="nav-link active fw-bold py-3 px-4 position-relative" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending-panel" type="button" role="tab">
             <i class="bi bi-hourglass-top text-warning me-1"></i> Pending Requests
             {% if pending_requests|length > 0 %}
-            <span class="badge bg-danger rounded-pill ms-2">{{ pending_requests|length }}</span>
+            <span class="badge bg-danger rounded-pill ms-2 tabular-nums">{{ pending_requests|length }}</span>
             {% endif %}
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link fw-bold py-3 px-4" id="active-tab" data-bs-toggle="tab" data-bs-target="#active-panel" type="button" role="tab">
-            <i class="bi bi-check-circle-fill text-success me-1"></i> Active Loans ({{ active_loans|length }})
+            <i class="bi bi-check-circle-fill text-success me-1"></i> Active Loans <span class="tabular-nums ms-1">({{ active_loans|length }})</span>
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link fw-bold py-3 px-4" id="history-tab" data-bs-toggle="tab" data-bs-target="#history-panel" type="button" role="tab">
-            <i class="bi bi-clock-history text-secondary me-1"></i> Circulation Audit History ({{ completed_history|length }})
+            <i class="bi bi-clock-history text-secondary me-1"></i> Circulation Audit History <span class="tabular-nums ms-1">({{ completed_history|length }})</span>
         </button>
     </li>
 </ul>
 
 <div class="tab-content" id="requestTabsContent">
-    <!-- TAB 1: PENDING REQUESTS -->
+    <!-- TAB 1: PENDING REQUESTS TRIAGE -->
     <div class="tab-pane fade show active" id="pending-panel" role="tabpanel">
         {% if pending_requests %}
         <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
@@ -55,7 +55,7 @@
                             <th>Student Applicant</th>
                             <th>Student Quota</th>
                             <th>Requested On</th>
-                            <th class="text-end">Actions</th>
+                            <th class="text-end">Triage Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -66,24 +66,31 @@
                                 <small class="text-secondary">{{ req.book.author }} &bull; {{ req.book.section.name }}</small>
                             </td>
                             <td>
-                                <div class="fw-semibold text-dark">{{ req.user.full_name }}</div>
-                                <small class="text-muted">@{{ req.user.username }}</small>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style="width: 28px; height: 28px; font-size: 0.75rem; background-color: var(--brand-navy-800);">
+                                        {{ req.user.username[0].upper() }}
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold text-dark">{{ req.user.full_name }}</div>
+                                        <small class="text-muted">@{{ req.user.username }}</small>
+                                    </div>
+                                </div>
                             </td>
                             <td>
-                                <span class="badge {% if req.user.active_quota_count >= 5 %}bg-danger{% else %}bg-primary{% endif %}">
+                                <span class="badge {% if req.user.active_quota_count >= 5 %}bg-danger{% else %}bg-primary{% endif %} tabular-nums">
                                     {{ req.user.active_quota_count }} / 5 Books
                                 </span>
                             </td>
                             <td>
-                                <small class="text-dark">{{ req.request_date.strftime('%d %b %Y, %H:%M') }}</small>
+                                <small class="text-dark tabular-nums">{{ req.request_date.strftime('%d %b %Y, %H:%M') }}</small>
                             </td>
                             <td class="text-end">
                                 <div class="d-inline-flex gap-2">
-                                    <!-- Approve Button / Modal Trigger -->
+                                    <!-- One-Click Approve with Duration Picker Modal -->
                                     <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#approveModal{{ req.id }}">
                                         <i class="bi bi-check-lg me-1"></i> Approve
                                     </button>
-                                    <!-- Reject Button / Modal Trigger -->
+                                    <!-- Decline with Note Modal -->
                                     <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#rejectModal{{ req.id }}">
                                         <i class="bi bi-x-lg me-1"></i> Decline
                                     </button>
@@ -91,7 +98,7 @@
                             </td>
                         </tr>
 
-                        <!-- Modal: Approve Loan with Custom Days -->
+                        <!-- Modal: Approve Loan with Custom Duration Picker -->
                         <div class="modal fade" id="approveModal{{ req.id }}" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content rounded-4 border-0 shadow">
@@ -107,14 +114,14 @@
                                                 Grant reading access to <strong>{{ req.user.full_name }}</strong> (@{{ req.user.username }}).
                                             </p>
                                             <div class="mb-3">
-                                                <label class="form-label fw-semibold">Loan Duration (Days)</label>
+                                                <label class="form-label fw-semibold">Loan Duration</label>
                                                 <select name="loan_days" class="form-select">
                                                     <option value="7" selected>7 Days (Standard Academic Loan)</option>
                                                     <option value="14">14 Days (Extended Loan)</option>
                                                     <option value="21">21 Days (Semester Reference)</option>
                                                     <option value="1">1 Day (Quick Review)</option>
                                                 </select>
-                                                <small class="text-muted">Access will be automatically revoked when the loan expires.</small>
+                                                <small class="text-muted d-block mt-2">Access will be automatically revoked when the loan expires.</small>
                                             </div>
                                         </div>
                                         <div class="modal-footer bg-light">
@@ -159,7 +166,7 @@
         {% else %}
         <div class="card border-0 shadow-sm p-5 text-center rounded-4 bg-white">
             <i class="bi bi-check-circle fs-1 text-success mb-3"></i>
-            <h5 class="text-secondary">Request Queue is Clear!</h5>
+            <h5 class="text-secondary">Request Queue is Clear</h5>
             <p class="text-muted small">No pending e-book requests from students at this time.</p>
         </div>
         {% endif %}
@@ -176,7 +183,7 @@
                             <th>Book Details</th>
                             <th>Issued To</th>
                             <th>Issue Date</th>
-                            <th>Due Date & Expiry</th>
+                            <th>Due Date & Urgency</th>
                             <th class="text-end">Administrative Action</th>
                         </tr>
                     </thead>
@@ -191,12 +198,22 @@
                                 <div class="fw-semibold text-dark">{{ loan.user.full_name }}</div>
                                 <small class="text-muted">@{{ loan.user.username }}</small>
                             </td>
-                            <td><small>{{ loan.issue_date.strftime('%d %b %Y') if loan.issue_date else 'N/A' }}</small></td>
+                            <td><span class="tabular-nums">{{ loan.issue_date.strftime('%d %b %Y') if loan.issue_date else 'N/A' }}</span></td>
                             <td>
-                                <div class="fw-semibold text-dark">{{ loan.due_date.strftime('%d %b %Y') if loan.due_date else 'N/A' }}</div>
-                                <span class="badge bg-success-subtle text-success border border-success-subtle">
-                                    <i class="bi bi-clock me-1"></i>{{ loan.days_remaining }} days remaining
-                                </span>
+                                <div class="fw-semibold text-dark tabular-nums">{{ loan.due_date.strftime('%d %b %Y') if loan.due_date else 'N/A' }}</div>
+                                {% if loan.days_remaining > 2 %}
+                                    <span class="badge-due badge-due-safe">
+                                        <i class="bi bi-clock me-1"></i>{{ loan.days_remaining }} days remaining
+                                    </span>
+                                {% elif loan.days_remaining > 0 %}
+                                    <span class="badge-due badge-due-warning">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>Due in {{ loan.days_remaining }} day(s)
+                                    </span>
+                                {% else %}
+                                    <span class="badge-due badge-due-urgent">
+                                        <i class="bi bi-exclamation-octagon me-1"></i>Due Today / Expiring
+                                    </span>
+                                {% endif %}
                             </td>
                             <td class="text-end">
                                 <form action="{{ url_for('process_request_page') }}" method="post" onsubmit="return confirm('Revoke immediate access for {{ loan.book.title }} from {{ loan.user.username }}?');">
@@ -248,9 +265,9 @@
                                 <small class="text-muted">@{{ hist.user.username }}</small>
                             </td>
                             <td>
-                                <small class="d-block text-secondary">Requested: {{ hist.request_date.strftime('%d %b %Y') }}</small>
+                                <small class="d-block text-secondary tabular-nums">Requested: {{ hist.request_date.strftime('%d %b %Y') }}</small>
                                 {% if hist.return_date %}
-                                    <small class="d-block text-dark fw-semibold">Resolved: {{ hist.return_date.strftime('%d %b %Y') }}</small>
+                                    <small class="d-block text-dark fw-semibold tabular-nums">Resolved: {{ hist.return_date.strftime('%d %b %Y') }}</small>
                                 {% endif %}
                             </td>
                             <td>

@@ -6,19 +6,19 @@
 <!-- Dashboard Title & Actions -->
 <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
     <div>
-        <h2 class="fw-bold text-dark mb-1">
+        <h2 class="fw-bold mb-1 text-dark">
             <i class="bi bi-speedometer2 text-primary me-2"></i>Librarian Command Center
         </h2>
-        <p class="text-secondary mb-0">System-wide monitoring, curriculum section control, and digital asset management.</p>
+        <p class="text-secondary mb-0">Curriculum section governance, digital asset inventory, and student loan oversight.</p>
     </div>
     <div class="d-flex gap-2 mt-3 mt-md-0">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSectionModal">
+        <button type="button" class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#addSectionModal">
             <i class="bi bi-folder-plus me-1"></i> Add Academic Section
         </button>
-        <a href="{{ url_for('process_request_page') }}" class="btn btn-warning position-relative text-dark fw-bold">
+        <a href="{{ url_for('process_request_page') }}" class="btn btn-gold position-relative text-dark fw-bold shadow-sm">
             <i class="bi bi-inbox-fill me-1"></i> Request Queue
             {% if pending_requests_count > 0 %}
-            <span class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle">
+            <span class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle tabular-nums">
                 {{ pending_requests_count }}
             </span>
             {% endif %}
@@ -26,8 +26,8 @@
     </div>
 </div>
 
-<!-- KPI Metric Cards -->
-<div class="row g-4 mb-5">
+<!-- Executive KPI Metric Grid -->
+<div class="row g-3 mb-5">
     <div class="col-lg-2 col-md-4 col-sm-6">
         <div class="stat-card">
             <div class="stat-icon primary">
@@ -96,13 +96,13 @@
     </div>
 </div>
 
-<!-- Pending Requests Alert Banner if any -->
+<!-- Pending Requests Alert Banner -->
 {% if pending_requests_count > 0 %}
-<div class="alert alert-warning border-0 shadow-sm rounded-4 p-3 d-flex align-items-center justify-content-between mb-4">
+<div class="alert alert-warning border shadow-sm rounded-4 p-3 d-flex align-items-center justify-content-between mb-4">
     <div class="d-flex align-items-center gap-3">
         <i class="bi bi-bell-fill fs-3 text-warning"></i>
         <div>
-            <div class="fw-bold text-dark">You have {{ pending_requests_count }} pending book borrowing request(s) awaiting review!</div>
+            <div class="fw-bold text-dark">You have <span class="tabular-nums">{{ pending_requests_count }}</span> pending book borrowing request(s) awaiting review</div>
             <small class="text-secondary">Students cannot access their requested courseware until approved.</small>
         </div>
     </div>
@@ -116,7 +116,7 @@
 <div class="mb-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <h4 class="fw-bold text-dark mb-0">
+            <h4 class="fw-bold mb-0">
                 <i class="bi bi-collection text-primary me-2"></i>Curriculum Sections Management
             </h4>
             <small class="text-muted">Organize, modify, and manage subject disciplines</small>
@@ -135,14 +135,14 @@
                         <i class="bi {{ section.icon }} fs-4 text-warning"></i>
                         <span class="fw-bold text-white fs-6">{{ section.name }}</span>
                     </div>
-                    <span class="badge rounded-pill bg-white text-dark">{{ section.book_count }} e-Books</span>
+                    <span class="badge rounded-pill bg-white text-dark tabular-nums">{{ section.book_count }} e-Books</span>
                 </div>
                 <div class="section-body">
                     <p class="text-muted small mb-3">
                         {{ section.description or 'No description provided.' }}
                     </p>
                     <div class="small text-secondary mb-3">
-                        <i class="bi bi-calendar3 me-1"></i> Created: {{ section.created_at.strftime('%d %b %Y') if section.created_at else 'N/A' }}
+                        <i class="bi bi-calendar3 me-1"></i> Created: <span class="tabular-nums">{{ section.created_at.strftime('%d %b %Y') if section.created_at else 'N/A' }}</span>
                     </div>
 
                     <!-- Action Buttons -->
@@ -153,7 +153,7 @@
                         <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editSectionModal{{ section.id }}" title="Edit Section Details">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <form action="{{ url_for('delete_section', section_id=section.id) }}" method="post" onsubmit="return confirm('WARNING: Deleting this section will permanently delete all its {{ section.book_count }} books and files! Proceed?');">
+                        <form action="{{ url_for('delete_section', section_id=section.id) }}" method="post" onsubmit="return confirm('WARNING: Deleting this section will permanently delete all its {{ section.book_count }} books and files. Proceed?');">
                             <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete Section">
                                 <i class="bi bi-trash"></i>
                             </button>

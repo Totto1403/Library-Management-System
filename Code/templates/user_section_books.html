@@ -53,13 +53,13 @@
                     {{ book.content }}
                 </p>
                 <div class="book-card-meta">
-                    <span><i class="bi bi-file-text me-1"></i>{{ book.pages }} pages</span>
+                    <span class="tabular-nums"><i class="bi bi-file-text me-1"></i>{{ book.pages }} pages</span>
                     <span><i class="bi bi-bookmark me-1"></i>{{ book.edition }}</span>
                     <span>
                         <span class="star-rating">
                             <i class="bi bi-star-fill"></i>
                         </span>
-                        <strong>{{ book.average_rating }}</strong> ({{ book.ratings_count }})
+                        <strong class="tabular-nums">{{ book.average_rating }}</strong> <span class="tabular-nums">({{ book.ratings_count }})</span>
                     </span>
                 </div>
 

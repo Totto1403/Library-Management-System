@@ -46,7 +46,7 @@
                     </td>
                     <td>
                         <div class="d-flex align-items-center gap-2">
-                            <span class="badge {% if u.active_quota_count >= 5 %}bg-danger{% else %}bg-primary{% endif %} px-2 py-1">
+                            <span class="badge {% if u.active_quota_count >= 5 %}bg-danger{% else %}bg-primary{% endif %} px-2 py-1 tabular-nums">
                                 {{ u.active_quota_count }} / 5 Books
                             </span>
                             <div class="progress flex-grow-1" style="height: 6px; width: 70px;">
@@ -62,7 +62,7 @@
                                 <li class="text-dark mb-1">
                                     <i class="bi bi-book text-success me-1"></i>
                                     <strong>{{ loan.book.title }}</strong>
-                                    <span class="text-muted">(Due: {{ loan.due_date.strftime('%d %b') if loan.due_date else 'N/A' }})</span>
+                                    <span class="text-muted tabular-nums">(Due: {{ loan.due_date.strftime('%d %b') if loan.due_date else 'N/A' }})</span>
                                 </li>
                                 {% endfor %}
                             </ul>
@@ -71,11 +71,11 @@
                         {% endif %}
                     </td>
                     <td>
-                        <span class="fw-semibold text-dark">{{ u.issues|length }}</span>
+                        <span class="fw-semibold text-dark tabular-nums">{{ u.issues|length }}</span>
                         <small class="text-muted">records</small>
                     </td>
                     <td>
-                        <small class="text-secondary">{{ u.created_at.strftime('%d %b %Y') if u.created_at else 'N/A' }}</small>
+                        <small class="text-secondary tabular-nums">{{ u.created_at.strftime('%d %b %Y') if u.created_at else 'N/A' }}</small>
                     </td>
                 </tr>
                 {% endfor %}
