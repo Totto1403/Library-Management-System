@@ -1,0 +1,22 @@
+# Video presentation (exceeds GitHub 100MB limit and explicitly ignored)
+MAD1_Video_Presentation.mp4
+*.mp4
+
+# Avoid duplicate tracking of Code inside submission folder
+22f2000805_Project_Folder/Code/
+
+# Python cache & runtime
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+.venv/
+env/
+venv/
+instance/
+
+# OS and Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

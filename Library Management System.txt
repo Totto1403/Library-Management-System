@@ -1,0 +1,79 @@
+Problem Statement: Library Management System
+Frameworks to be used
+Flask for application code
+Jinja2 templates + Bootstrap for HTML generation and styling
+SQLite for data storage
+All demos should be possible on your local machine using any local IDE and should not require setting up new servers for database and frontend management
+
+Library Management System
+It is a multi-user app (one required librarian and other general users/students)
+Used for issuing e-books to users
+User can request, read, return e-books
+Librarian can add new sections/e-books, issue/revoke access for a book.
+Each Section may have
+ID
+Name
+Date created
+Description
+Each book will have
+ID
+Name
+Content
+Author(s)
+Date issued
+Return date.
+Every section can have a number of books
+System will automatically show recently added sections/books or based on certain rating
+
+Terminology
+Sections
+User, Librarian, Admin
+e-Book, content
+Policies*
+Similar Products in the Market:
+
+
+Amazon - e-books
+Web, IOS and Android
+Book Depository
+Web, IOS and Android
+
+
+These are meant for exploring the idea and inspiration
+Don’t copy, get inspired 
+
+
+This will be graded 
+Base requirements:
+Librarian’s Dashboard
+General User Profile
+Section Management
+Book Management
+Search functionality for section/e-books 
+
+Core - Librarian and User Login
+Form for username and password for user
+Separate form for librarian login for simplicity
+You can either use a proper login framework, or just use a simple HTML form with username and password - we are not concerned with how secure the login or the app is.
+Suitable model for user (Model that stores the type of users and differentiates them correctly based on their role)
+
+Core - General User functionalities
+Login/Register
+View all the existing Sections/e-books 
+Request/Return Books (content)
+A user can request for a maximum of 5 e-books 
+A user can access a book for a specific period of time (say N hours/days/weeks).
+For e.g. if N = 7 days, user can return a book before 7 days. If he/she fails to do so, the access for that will be automatically revoked after 7 days.
+User can give feedback for an e-book
+
+Core - Librarian functionalities
+Issue one or multiple e-book(s) to a user
+Revoke access for one or multiple e-book(s) from a user
+Storage should handle multiple languages - usually UTF-8 encoding is sufficient for this
+Edit an existing section/e-book
+Change content, author name,  no. of pages/volume etc.
+Remove an existing section/e-book
+Assign a book to a particular section
+A librarian can monitor current status of each e-book and the user it is issued to
+Available e-books in the Library
+

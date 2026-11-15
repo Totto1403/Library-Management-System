@@ -1,0 +1,71 @@
+-- ========================================================
+-- IIT MADRAS LIBRARY MANAGEMENT SYSTEM (LMS) - DATABASE SCHEMA
+-- Course: Modern Application Development 1 (MAD 1)
+-- Framework: Flask-SQLAlchemy + SQLite Relational Engine
+-- Encoding: UTF-8
+-- ========================================================
+
+PRAGMA foreign_keys = ON;
+
+-- 1. Users Table (Supports RBAC: 'user' and 'librarian', Secure PBKDF2 Password Hashing)
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(20) NOT NULL DEFAULT 'user', -- 'user' or 'librarian'
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(120),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Sections Table (Academic Disciplines & Book Organization)
+CREATE TABLE sections (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    description TEXT,
+    icon VARCHAR(50) DEFAULT 'bi-journal-bookmark-fill',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 3. Books Table (eBooks metadata, uploaded PDFs, multi-language & edition support)
+CREATE TABLE books (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title VARCHAR(150) NOT NULL,
+    author VARCHAR(150) NOT NULL,
+    content TEXT,
+    section_id INTEGER NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
+    pages INTEGER DEFAULT 1,
+    language VARCHAR(50) DEFAULT 'English',
+    edition VARCHAR(50) DEFAULT '1st Edition',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (section_id) REFERENCES sections(id) ON DELETE CASCADE
+);
+
+-- 4. Book Issues Table (Borrowing Requests, 7-Day Loan Duration, 5-Book Limit, Auto-Revocation)
+CREATE TABLE book_issues (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    book_id INTEGER NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'pending', -- 'pending', 'issued', 'returned', 'revoked', 'rejected'
+    request_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    issue_date DATETIME,
+    due_date DATETIME,
+    return_date DATETIME,
+    rejection_reason VARCHAR(255),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+);
+
+-- 5. Feedbacks Table (Student Ratings 1-5 Stars and Courseware Reviews)
+CREATE TABLE feedbacks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    book_id INTEGER NOT NULL,
+    rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    comment TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_user_book_feedback UNIQUE (user_id, book_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+);

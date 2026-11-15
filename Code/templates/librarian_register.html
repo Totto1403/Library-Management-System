@@ -1,44 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/bootstrap.css">
-    <link rel="stylesheet" href="../static/librarian_register_style.css">
-    <title>Section Books</title>
-</head>
+{% block title %}Add Librarian Administrator{% endblock %}
 
-<body>
-    <div class="header">
-        <div class="logo-container">
-            <div class="logo">
-                <img src="../static/IITM_logo.png" alt="College Logo">
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-lg-5 col-md-8">
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+            <!-- Header Banner -->
+            <div class="p-4 text-center text-white" style="background: linear-gradient(135deg, #0b2545 0%, #134074 100%); border-bottom: 3px solid var(--accent-gold);">
+                <i class="bi bi-shield-lock-fill fs-1 text-warning mb-2 d-block"></i>
+                <h3 class="fw-bold mb-1">Create Librarian Administrator</h3>
+                <p class="small text-light mb-0" style="opacity: 0.85;">Authorized Librarian Account Provisioning</p>
             </div>
-            <div class="college-details">
-                <div class="course-code">Library Management System</div>
-                <div class="course-name">Librarian Dashboard</div>
+
+            <div class="p-4 p-md-5 bg-white">
+                <form method="post" action="{{ url_for('librarian_register') }}">
+                    <div class="mb-3">
+                        <label for="full_name" class="form-label fw-semibold text-secondary small">Administrator Full Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-person-badge text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0" id="full_name" name="full_name" placeholder="e.g. Dr. Ramesh Kumar" required autofocus>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label fw-semibold text-secondary small">Librarian Staff ID / Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0" id="username" name="username" placeholder="e.g. librarian2" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label fw-semibold text-secondary small">Staff Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
+                            <input type="email" class="form-control border-start-0" id="email" name="email" placeholder="e.g. staff.library@iitm.ac.in">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label fw-semibold text-secondary small">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
+                            <input type="password" class="form-control border-start-0" id="password" name="password" placeholder="Secure password" required>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('librarian_dashboard') }}" class="btn btn-outline-secondary w-50 py-2">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary w-50 py-2 fw-bold shadow-sm">
+                            <i class="bi bi-shield-plus me-1"></i> Create Admin
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-        <div class="links">
-            <a href="/librarian/dashboard" class="link">Section</a>
-            <a href="/librarian/process_request" class="link">Book Requests</a>
-            <a href="/librarian/new" class="link">Librarian</a>
-            <a href="/logout" class="link">Logout</a>
-        </div>
     </div>
-    <div class="card">
-        <h2 class="card-title">Librarian Register</h2>
-        <form action="/librarian/register" method="post">
-            <div class="form-group">
-                <input type="text" class="form-control" name="username" placeholder="Username" required>
-            </div>
-            <div class="form-group">
-                <input type="password" class="form-control" name="password" placeholder="Password" required>
-            </div>
-            <button type="submit" class="btn btn-primary btn-register">Register</button>
-        </form>
-    </div>
-    <div class="footer"></div>
-</body>
-</html>
+</div>
+{% endblock %}

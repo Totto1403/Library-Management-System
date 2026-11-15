@@ -1,60 +1,303 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/user_book_style.css">
-    <title>Book Requests</title>
-</head>
+{% block title %}My Bookshelf & Loans{% endblock %}
 
-<body>
-    <div class="header">
-        <div class="logo-container">
-            <div class="logo">
-                <img src="/static/IITM_logo.png" alt="College Logo">
-            </div>
-            <div class="college-details">
-                <div class="course-code">Library Management System</div>
-                <div class="course-name">Librarian Dashboard</div>
+{% block content %}
+<!-- Page Header -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-dark mb-1">
+            <i class="bi bi-book-half text-primary me-2"></i>My e-Books & Borrowings
+        </h2>
+        <p class="text-secondary mb-0">Manage your active loans, track pending requests, and review reading history.</p>
+    </div>
+    <div>
+        <span class="badge bg-white text-dark border p-2 px-3 rounded-pill shadow-sm">
+            <i class="bi bi-collection-fill text-primary me-1"></i> Current Quota: <strong>{{ user.active_quota_count }} / 5</strong>
+        </span>
+    </div>
+</div>
+
+<!-- Tabs Navigation -->
+<ul class="nav nav-tabs mb-4" id="bookshelfTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active fw-bold py-3 px-4" id="active-tab" data-bs-toggle="tab" data-bs-target="#active-loans" type="button" role="tab" aria-controls="active-loans" aria-selected="true">
+            <i class="bi bi-check-circle-fill text-success me-1"></i> Active Loans ({{ active_loans|length }})
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link fw-bold py-3 px-4 position-relative" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending-reqs" type="button" role="tab" aria-controls="pending-reqs" aria-selected="false">
+            <i class="bi bi-hourglass-split text-warning me-1"></i> Pending Requests ({{ pending_requests|length }})
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link fw-bold py-3 px-4" id="history-tab" data-bs-toggle="tab" data-bs-target="#past-history" type="button" role="tab" aria-controls="past-history" aria-selected="false">
+            <i class="bi bi-clock-history text-secondary me-1"></i> History & Reviews ({{ past_history|length }})
+        </button>
+    </li>
+</ul>
+
+<!-- Tabs Content -->
+<div class="tab-content" id="bookshelfTabsContent">
+    <!-- TAB 1: ACTIVE LOANS -->
+    <div class="tab-pane fade show active" id="active-loans" role="tabpanel" aria-labelledby="active-tab">
+        {% if active_loans %}
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+            <div class="table-responsive">
+                <table class="table lms-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Book Details</th>
+                            <th>Section</th>
+                            <th>Issued On</th>
+                            <th>Due Date & Expiry</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for loan in active_loans %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="bg-primary text-white rounded-3 p-2 text-center" style="width: 44px; height: 44px;">
+                                        <i class="bi bi-file-earmark-pdf fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">{{ loan.book.title }}</div>
+                                        <small class="text-secondary"><i class="bi bi-person me-1"></i>{{ loan.book.author }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border">{{ loan.book.section.name }}</span>
+                            </td>
+                            <td>
+                                <small class="text-dark">{{ loan.issue_date.strftime('%d %b %Y') if loan.issue_date else 'N/A' }}</small>
+                            </td>
+                            <td>
+                                {% if loan.due_date %}
+                                    <div class="fw-semibold text-dark">{{ loan.due_date.strftime('%d %b %Y') }}</div>
+                                    {% if loan.days_remaining > 2 %}
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                            <i class="bi bi-clock me-1"></i>{{ loan.days_remaining }} days remaining
+                                        </span>
+                                    {% elif loan.days_remaining > 0 %}
+                                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>Due in {{ loan.days_remaining }} day(s)
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                                            <i class="bi bi-exclamation-octagon me-1"></i>Due Today / Expiring
+                                        </span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-muted">7-Day Standard Loan</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                <div class="d-inline-flex gap-2">
+                                    <a href="{{ url_for('view_pdf', book_id=loan.book.id) }}" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-book me-1"></i> Read Online
+                                    </a>
+                                    <a href="{{ url_for('download_pdf', book_id=loan.book.id) }}" class="btn btn-sm btn-outline-secondary" title="Download eBook">
+                                        <i class="bi bi-download"></i>
+                                    </a>
+                                    <form action="{{ url_for('return_book', issue_id=loan.id) }}" method="post" onsubmit="return confirm('Confirm returning {{ loan.book.title }}?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Return Book">
+                                            <i class="bi bi-arrow-return-left me-1"></i> Return
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
-        <div class="links">
-            <a href="{{ url_for('user_my_books', username=session['username']) }}" class="link">My Books</a>
-            <a href="/user/dashboard" class="link">Books</a>
-            <a href="/logout" class="link">Logout</a>
+        {% else %}
+        <div class="card border-0 shadow-sm p-5 text-center rounded-4 bg-white">
+            <i class="bi bi-journal-check fs-1 text-muted mb-3"></i>
+            <h5 class="text-secondary">No Active Loans</h5>
+            <p class="text-muted small">You currently have no issued e-books. Explore curriculum sections to request courseware.</p>
+            <a href="{{ url_for('user_dashboard') }}" class="btn btn-primary btn-sm mx-auto">
+                Explore e-Books
+            </a>
         </div>
+        {% endif %}
     </div>
 
-    <div class="container">
-        <div class="biography">
-            <div class="section-container">
-                <div class="table-box">
-                    <h1>My Books</h1>
-                    <table class="table-content">
-                        <thead>
-                            <tr>
-                                <th>Book Name</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for book in user_books %}
-                            <tr>
-                                <td>{{ book.book_name }}</td>
-                                <td>
-                                    <a href="{{ url_for('view_pdf', book_id=book.book_id) }}"><button class="view-btn">View</button></a>
-                                    <button class="return-btn">Return</button>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+    <!-- TAB 2: PENDING REQUESTS -->
+    <div class="tab-pane fade" id="pending-reqs" role="tabpanel" aria-labelledby="pending-tab">
+        {% if pending_requests %}
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+            <div class="table-responsive">
+                <table class="table lms-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Book Details</th>
+                            <th>Section</th>
+                            <th>Requested On</th>
+                            <th>Status</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in pending_requests %}
+                        <tr>
+                            <td>
+                                <div class="fw-bold text-dark">{{ req.book.title }}</div>
+                                <small class="text-secondary">{{ req.book.author }}</small>
+                            </td>
+                            <td><span class="badge bg-light text-dark border">{{ req.book.section.name }}</span></td>
+                            <td><small>{{ req.request_date.strftime('%d %b %Y, %H:%M') }}</small></td>
+                            <td>
+                                <span class="badge bg-warning text-dark">
+                                    <i class="bi bi-clock-history me-1"></i> Awaiting Librarian Approval
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <form action="{{ url_for('cancel_request', issue_id=req.id) }}" method="post" onsubmit="return confirm('Cancel this book request?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-x-circle me-1"></i> Cancel Request
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
+        {% else %}
+        <div class="card border-0 shadow-sm p-5 text-center rounded-4 bg-white">
+            <i class="bi bi-inbox fs-1 text-muted mb-3"></i>
+            <h5 class="text-secondary">No Pending Requests</h5>
+            <p class="text-muted small">All your e-book requests have been processed.</p>
+        </div>
+        {% endif %}
     </div>
 
-    <div class="footer"></div>
-</body>
-</html>
+    <!-- TAB 3: BORROWING HISTORY & REVIEWS -->
+    <div class="tab-pane fade" id="past-history" role="tabpanel" aria-labelledby="history-tab">
+        {% if past_history %}
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+            <div class="table-responsive">
+                <table class="table lms-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Book Details</th>
+                            <th>Borrowing Period</th>
+                            <th>Final Status</th>
+                            <th>My Feedback & Rating</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for hist in past_history %}
+                        {% set fb = user_feedbacks.get(hist.book_id) %}
+                        <tr>
+                            <td>
+                                <div class="fw-bold text-dark">{{ hist.book.title }}</div>
+                                <small class="text-secondary">{{ hist.book.author }}</small>
+                            </td>
+                            <td>
+                                <small class="d-block text-secondary">Requested: {{ hist.request_date.strftime('%d %b %Y') }}</small>
+                                {% if hist.return_date %}
+                                    <small class="d-block text-dark fw-semibold">Closed: {{ hist.return_date.strftime('%d %b %Y') }}</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if hist.status == 'returned' %}
+                                    <span class="badge bg-info text-dark">
+                                        <i class="bi bi-arrow-return-left me-1"></i> Returned
+                                    </span>
+                                {% elif hist.status == 'revoked' %}
+                                    <span class="badge bg-danger" title="{{ hist.rejection_reason or 'Access revoked' }}">
+                                        <i class="bi bi-slash-circle me-1"></i> Auto-Revoked (Expired)
+                                    </span>
+                                    {% if hist.rejection_reason %}
+                                    <small class="d-block text-muted mt-1" style="font-size: 0.75rem;">{{ hist.rejection_reason }}</small>
+                                    {% endif %}
+                                {% elif hist.status == 'rejected' %}
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-x-circle me-1"></i> Request Declined
+                                    </span>
+                                    {% if hist.rejection_reason %}
+                                    <small class="d-block text-muted mt-1" style="font-size: 0.75rem;">{{ hist.rejection_reason }}</small>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if fb %}
+                                    <div class="star-rating mb-1">
+                                        {% for i in range(fb.rating) %}
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                        {% endfor %}
+                                        {% for i in range(5 - fb.rating) %}
+                                            <i class="bi bi-star text-muted"></i>
+                                        {% endfor %}
+                                    </div>
+                                    <small class="text-secondary d-block fst-italic">"{{ fb.comment }}"</small>
+                                {% else %}
+                                    <span class="text-muted small">No review yet</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                <!-- Trigger Feedback Modal -->
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#feedbackModal{{ hist.book_id }}">
+                                    <i class="bi bi-pencil-square me-1"></i> {% if fb %}Edit Review{% else %}Leave Review{% endif %}
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Feedback Modal for this book -->
+                        <div class="modal fade" id="feedbackModal{{ hist.book_id }}" tabindex="-1" aria-labelledby="modalLabel{{ hist.book_id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content rounded-4 border-0 shadow">
+                                    <div class="modal-header bg-light">
+                                        <h5 class="modal-title fw-bold" id="modalLabel{{ hist.book_id }}">
+                                            Rate & Review: {{ hist.book.title }}
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form action="{{ url_for('submit_feedback', book_id=hist.book_id) }}" method="post">
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Star Rating (1 to 5 Stars)</label>
+                                                <select name="rating" class="form-select">
+                                                    <option value="5" {% if fb and fb.rating == 5 %}selected{% endif %}>⭐⭐⭐⭐⭐ (5 Stars - Excellent)</option>
+                                                    <option value="4" {% if fb and fb.rating == 4 %}selected{% endif %}>⭐⭐⭐⭐ (4 Stars - Very Good)</option>
+                                                    <option value="3" {% if fb and fb.rating == 3 %}selected{% endif %}>⭐⭐⭐ (3 Stars - Good)</option>
+                                                    <option value="2" {% if fb and fb.rating == 2 %}selected{% endif %}>⭐⭐ (2 Stars - Fair)</option>
+                                                    <option value="1" {% if fb and fb.rating == 1 %}selected{% endif %}>⭐ (1 Star - Needs Improvement)</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Your Comments / Notes</label>
+                                                <textarea name="comment" rows="3" class="form-control" placeholder="Share your feedback on the book content, examples, and readability...">{{ fb.comment if fb else '' }}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer bg-light">
+                                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary btn-sm px-3">Save Review</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <div class="card border-0 shadow-sm p-5 text-center rounded-4 bg-white">
+            <i class="bi bi-clock-history fs-1 text-muted mb-3"></i>
+            <h5 class="text-secondary">No History Yet</h5>
+            <p class="text-muted small">Your past borrowings and return receipts will appear here.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

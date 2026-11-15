@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Enrolled Students & User Activity{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-dark mb-1">
+            <i class="bi bi-people-fill text-primary me-2"></i>Student Accounts & Loan Monitor
+        </h2>
+        <p class="text-secondary mb-0">Track student quota utilization, issued reading licenses, and library engagement.</p>
+    </div>
+    <div>
+        <span class="badge bg-white text-dark border p-2 px-3 rounded-pill shadow-sm">
+            <i class="bi bi-person-check-fill text-success me-1"></i> Total Enrolled: <strong>{{ users|length }}</strong>
+        </span>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+    <div class="table-responsive">
+        <table class="table lms-table mb-0">
+            <thead>
+                <tr>
+                    <th>Student Info</th>
+                    <th>Quota Utilization</th>
+                    <th>Currently Active Loans</th>
+                    <th>Total Lifetime Borrows</th>
+                    <th>Registration Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-circle bg-light border d-flex align-items-center justify-content-center text-primary fw-bold" style="width: 42px; height: 42px;">
+                                {{ u.username[0].upper() }}
+                            </div>
+                            <div>
+                                <div class="fw-bold text-dark">{{ u.full_name }}</div>
+                                <small class="text-secondary">@{{ u.username }} &bull; {{ u.email or 'N/A' }}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge {% if u.active_quota_count >= 5 %}bg-danger{% else %}bg-primary{% endif %} px-2 py-1">
+                                {{ u.active_quota_count }} / 5 Books
+                            </span>
+                            <div class="progress flex-grow-1" style="height: 6px; width: 70px;">
+                                <div class="progress-bar {% if u.active_quota_count >= 5 %}bg-danger{% else %}bg-primary{% endif %}" style="width: {{ (u.active_quota_count / 5.0) * 100 }}%;"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% set active_user_loans = u.issues|selectattr('status', 'equalto', 'issued')|list %}
+                        {% if active_user_loans %}
+                            <ul class="list-unstyled mb-0 small">
+                                {% for loan in active_user_loans %}
+                                <li class="text-dark mb-1">
+                                    <i class="bi bi-book text-success me-1"></i>
+                                    <strong>{{ loan.book.title }}</strong>
+                                    <span class="text-muted">(Due: {{ loan.due_date.strftime('%d %b') if loan.due_date else 'N/A' }})</span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <span class="text-muted small fst-italic">No active books</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="fw-semibold text-dark">{{ u.issues|length }}</span>
+                        <small class="text-muted">records</small>
+                    </td>
+                    <td>
+                        <small class="text-secondary">{{ u.created_at.strftime('%d %b %Y') if u.created_at else 'N/A' }}</small>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

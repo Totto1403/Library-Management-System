@@ -1,75 +1,246 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/librarian_dashboard_style.css">
-    <title>Librarian Dashboard</title>
-</head>
+{% block title %}Librarian Executive Dashboard{% endblock %}
 
-<body>
-    <div class="header">
-        <div class="logo-container">
-            <div class="logo">
-                <img src="../static/IITM_logo.png" alt="College Logo">
+{% block content %}
+<!-- Dashboard Title & Actions -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-dark mb-1">
+            <i class="bi bi-speedometer2 text-primary me-2"></i>Librarian Command Center
+        </h2>
+        <p class="text-secondary mb-0">System-wide monitoring, curriculum section control, and digital asset management.</p>
+    </div>
+    <div class="d-flex gap-2 mt-3 mt-md-0">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSectionModal">
+            <i class="bi bi-folder-plus me-1"></i> Add Academic Section
+        </button>
+        <a href="{{ url_for('process_request_page') }}" class="btn btn-warning position-relative text-dark fw-bold">
+            <i class="bi bi-inbox-fill me-1"></i> Request Queue
+            {% if pending_requests_count > 0 %}
+            <span class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle">
+                {{ pending_requests_count }}
+            </span>
+            {% endif %}
+        </a>
+    </div>
+</div>
+
+<!-- KPI Metric Cards -->
+<div class="row g-4 mb-5">
+    <div class="col-lg-2 col-md-4 col-sm-6">
+        <div class="stat-card">
+            <div class="stat-icon primary">
+                <i class="bi bi-book-half"></i>
             </div>
-            <div class="college-details">
-                <div class="course-code">Library Management System</div>
-                <div class="course-name">Librarian Dashboard</div>
+            <div>
+                <div class="stat-value">{{ total_books }}</div>
+                <div class="stat-label">Total e-Books</div>
             </div>
-        </div>
-        <div class="links">
-            <a href="/librarian/dashboard" class="link">Section</a>
-            <a href="/librarian/process_request" class="link">Book Requests</a>
-            <a href="/librarian/new" class="link">Librarian</a>
-            <a href="/logout" class="link">Logout</a>
         </div>
     </div>
-
-    <div class="container">
-        <div class="biography">
-            <div class="add-section-box">
-                <h2 align="center">Add Section</h2>
-                <form action="" method="post">
-                    <table>
-                        <tr>
-                            <td><label for="section_name">Section Name:</label></td>
-                            <td><input type="text" id="section_name" name="section_name" required></td>
-                        </tr>
-                        <tr>
-                            <td><label for="description">Description:</label></td>
-                            <td><textarea id="description" name="description" rows="3"></textarea></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td><button class="add-section-button" type="submit">Add Section</button></td>
-                        </tr>
-                    </table>
-                </form>
+    <div class="col-lg-2 col-md-4 col-sm-6">
+        <div class="stat-card">
+            <div class="stat-icon warning">
+                <i class="bi bi-folder2-open"></i>
             </div>
-            <div class="section-container">
-                {% for section in sections %}
-                <div class="section-box">
-                    <div class="section-box-content">
-                        <h3>{{ section['Name'] }}</h3>
-                        <p>Description: {{ section['Description'] }}</p>
-                        <p>Section ID: {{ section['ID'] }}</p>
-                        <p>Date Created: {{ section['DateCreated'] }}</p>
-                        <br>
+            <div>
+                <div class="stat-value">{{ total_sections }}</div>
+                <div class="stat-label">Sections</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-6">
+        <div class="stat-card">
+            <div class="stat-icon success">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <div>
+                <div class="stat-value">{{ active_issues_count }}</div>
+                <div class="stat-label">Active Loans</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-6">
+        <div class="stat-card">
+            <div class="stat-icon danger">
+                <i class="bi bi-clock-history"></i>
+            </div>
+            <div>
+                <div class="stat-value">{{ pending_requests_count }}</div>
+                <div class="stat-label">Pending Reqs</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-6">
+        <div class="stat-card">
+            <div class="stat-icon teal">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div>
+                <div class="stat-value">{{ total_users }}</div>
+                <div class="stat-label">Students</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-6">
+        <div class="stat-card">
+            <div class="stat-icon danger">
+                <i class="bi bi-shield-x"></i>
+            </div>
+            <div>
+                <div class="stat-value">{{ revoked_count }}</div>
+                <div class="stat-label">Revocations</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pending Requests Alert Banner if any -->
+{% if pending_requests_count > 0 %}
+<div class="alert alert-warning border-0 shadow-sm rounded-4 p-3 d-flex align-items-center justify-content-between mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <i class="bi bi-bell-fill fs-3 text-warning"></i>
+        <div>
+            <div class="fw-bold text-dark">You have {{ pending_requests_count }} pending book borrowing request(s) awaiting review!</div>
+            <small class="text-secondary">Students cannot access their requested courseware until approved.</small>
+        </div>
+    </div>
+    <a href="{{ url_for('process_request_page') }}" class="btn btn-warning btn-sm fw-bold text-dark px-3">
+        Review Queue <i class="bi bi-arrow-right ms-1"></i>
+    </a>
+</div>
+{% endif %}
+
+<!-- Section Management Section -->
+<div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h4 class="fw-bold text-dark mb-0">
+                <i class="bi bi-collection text-primary me-2"></i>Curriculum Sections Management
+            </h4>
+            <small class="text-muted">Organize, modify, and manage subject disciplines</small>
+        </div>
+        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSectionModal">
+            <i class="bi bi-plus-circle me-1"></i> New Section
+        </button>
+    </div>
+
+    <div class="row g-4">
+        {% for section in sections %}
+        <div class="col-lg-4 col-md-6">
+            <div class="section-card">
+                <div class="section-header d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi {{ section.icon }} fs-4 text-warning"></i>
+                        <span class="fw-bold text-white fs-6">{{ section.name }}</span>
                     </div>
-                    <form action="/delete_section/{{ section['ID'] }}" method="post"
-                        onsubmit="return confirm('Are you sure you want to delete this section?');">
-                        <button class="delete-section-button" type="submit">Delete</button>
-                    </form>
-                    <button class="view-section-button" 
-                    onclick="window.location.href='/section_books/{{ section['ID'] }}'">View</button>
+                    <span class="badge rounded-pill bg-white text-dark">{{ section.book_count }} e-Books</span>
                 </div>
-                {% endfor %}
+                <div class="section-body">
+                    <p class="text-muted small mb-3">
+                        {{ section.description or 'No description provided.' }}
+                    </p>
+                    <div class="small text-secondary mb-3">
+                        <i class="bi bi-calendar3 me-1"></i> Created: {{ section.created_at.strftime('%d %b %Y') if section.created_at else 'N/A' }}
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex flex-wrap gap-2 pt-2 border-top">
+                        <a href="{{ url_for('section_books', section_id=section.id) }}" class="btn btn-primary btn-sm flex-grow-1">
+                            <i class="bi bi-eye me-1"></i> View Books
+                        </a>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editSectionModal{{ section.id }}" title="Edit Section Details">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <form action="{{ url_for('delete_section', section_id=section.id) }}" method="post" onsubmit="return confirm('WARNING: Deleting this section will permanently delete all its {{ section.book_count }} books and files! Proceed?');">
+                            <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete Section">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="footer"></div>
-</body>
-</html>
+        <!-- Edit Section Modal -->
+        <div class="modal fade" id="editSectionModal{{ section.id }}" tabindex="-1" aria-labelledby="editSecLabel{{ section.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content rounded-4 border-0 shadow">
+                    <div class="modal-header bg-light">
+                        <h5 class="modal-title fw-bold" id="editSecLabel{{ section.id }}">Edit Section</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ url_for('edit_section', section_id=section.id) }}" method="post">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Section Name</label>
+                                <input type="text" name="section_name" class="form-control" value="{{ section.name }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Description</label>
+                                <textarea name="description" rows="3" class="form-control">{{ section.description or '' }}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Icon Identifier</label>
+                                <select name="icon" class="form-select">
+                                    <option value="bi-journal-bookmark-fill" {% if section.icon == 'bi-journal-bookmark-fill' %}selected{% endif %}>Book Journal</option>
+                                    <option value="bi-cpu-fill" {% if section.icon == 'bi-cpu-fill' %}selected{% endif %}>CPU / Computer Systems</option>
+                                    <option value="bi-code-slash" {% if section.icon == 'bi-code-slash' %}selected{% endif %}>Code / Software Dev</option>
+                                    <option value="bi-calculator-fill" {% if section.icon == 'bi-calculator-fill' %}selected{% endif %}>Math / Computing</option>
+                                    <option value="bi-layers-fill" {% if section.icon == 'bi-layers-fill' %}selected{% endif %}>Layers / Architecture</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer bg-light">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary btn-sm px-3">Update Section</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modal: Add New Section -->
+<div class="modal fade" id="addSectionModal" tabindex="-1" aria-labelledby="addSectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold" id="addSectionModalLabel">
+                    <i class="bi bi-folder-plus text-primary me-2"></i>Add Academic Section
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('add_section') }}" method="post">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="section_name" class="form-label fw-semibold">Section Name</label>
+                        <input type="text" class="form-control" id="section_name" name="section_name" placeholder="e.g. Artificial Intelligence & Robotics" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label fw-semibold">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" placeholder="Overview of the curriculum covered in this subject discipline..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="icon" class="form-label fw-semibold">Section Icon</label>
+                        <select name="icon" id="icon" class="form-select">
+                            <option value="bi-journal-bookmark-fill">Standard Journal / Course</option>
+                            <option value="bi-cpu-fill">Computer Systems & Hardware</option>
+                            <option value="bi-code-slash">Software Engineering & Programming</option>
+                            <option value="bi-calculator-fill">Mathematics & Statistics</option>
+                            <option value="bi-layers-fill">Data Science & Deep Tech</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm px-4">Create Section</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
