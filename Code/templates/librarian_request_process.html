@@ -67,17 +67,17 @@
                             </td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style="width: 28px; height: 28px; font-size: 0.75rem; background-color: var(--brand-navy-800);">
+                                    <div class="notion-avatar-circle" style="width: 28px; height: 28px; font-size: 12px;">
                                         {{ req.user.username[0].upper() }}
                                     </div>
                                     <div>
                                         <div class="fw-semibold text-dark">{{ req.user.full_name }}</div>
-                                        <small class="text-muted">@{{ req.user.username }}</small>
+                                        <div class="text-secondary small">@{{ req.user.username }}</div>
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                <span class="badge {% if req.user.active_quota_count >= 5 %}bg-danger{% else %}bg-primary{% endif %} tabular-nums">
+                                <span class="notion-tag {% if req.user.active_quota_count >= 5 %}notion-tag-red{% else %}notion-tag-blue{% endif %} tabular-nums">
                                     {{ req.user.active_quota_count }} / 5 Books
                                 </span>
                             </td>
@@ -101,9 +101,9 @@
                         <!-- Modal: Approve Loan with Custom Duration Picker -->
                         <div class="modal fade" id="approveModal{{ req.id }}" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog">
-                                <div class="modal-content rounded-4 border-0 shadow">
-                                    <div class="modal-header bg-light">
-                                        <h5 class="modal-title fw-bold">Issue e-Book: {{ req.book.title }}</h5>
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Issue e-Book: {{ req.book.title }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
                                     <form action="{{ url_for('process_request_page') }}" method="post">
@@ -121,10 +121,10 @@
                                                     <option value="21">21 Days (Semester Reference)</option>
                                                     <option value="1">1 Day (Quick Review)</option>
                                                 </select>
-                                                <small class="text-muted d-block mt-2">Access will be automatically revoked when the loan expires.</small>
+                                                <small class="text-secondary d-block mt-2">Access will be automatically revoked when the loan expires.</small>
                                             </div>
                                         </div>
-                                        <div class="modal-footer bg-light">
+                                        <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
                                             <button type="submit" class="btn btn-success btn-sm px-4">Grant Access</button>
                                         </div>
@@ -136,9 +136,9 @@
                         <!-- Modal: Decline Request -->
                         <div class="modal fade" id="rejectModal{{ req.id }}" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog">
-                                <div class="modal-content rounded-4 border-0 shadow">
-                                    <div class="modal-header bg-light">
-                                        <h5 class="modal-title fw-bold">Decline Request: {{ req.book.title }}</h5>
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Decline Request: {{ req.book.title }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
                                     <form action="{{ url_for('process_request_page') }}" method="post">
@@ -150,7 +150,7 @@
                                                 <textarea name="reason" rows="2" class="form-control" placeholder="Provide note for student (e.g. Quota limit reached, book undergoing revisions)...">Requested declined by library administration.</textarea>
                                             </div>
                                         </div>
-                                        <div class="modal-footer bg-light">
+                                        <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
                                             <button type="submit" class="btn btn-danger btn-sm px-4">Decline Request</button>
                                         </div>
@@ -272,22 +272,22 @@
                             </td>
                             <td>
                                 {% if hist.status == 'returned' %}
-                                    <span class="badge bg-info text-dark">
+                                    <span class="notion-tag notion-tag-blue">
                                         <i class="bi bi-arrow-return-left me-1"></i> Returned by Student
                                     </span>
                                 {% elif hist.status == 'revoked' %}
-                                    <span class="badge bg-danger">
+                                    <span class="notion-tag notion-tag-red">
                                         <i class="bi bi-slash-circle me-1"></i> Revoked / Expired
                                     </span>
                                     {% if hist.rejection_reason %}
-                                    <small class="d-block text-muted mt-1">{{ hist.rejection_reason }}</small>
+                                    <small class="d-block text-secondary mt-1">{{ hist.rejection_reason }}</small>
                                     {% endif %}
                                 {% elif hist.status == 'rejected' %}
-                                    <span class="badge bg-secondary">
+                                    <span class="notion-tag notion-tag-gray">
                                         <i class="bi bi-x-circle me-1"></i> Declined
                                     </span>
                                     {% if hist.rejection_reason %}
-                                    <small class="d-block text-muted mt-1">{{ hist.rejection_reason }}</small>
+                                    <small class="d-block text-secondary mt-1">{{ hist.rejection_reason }}</small>
                                     {% endif %}
                                 {% endif %}
                             </td>

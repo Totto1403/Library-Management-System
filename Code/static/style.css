@@ -13,35 +13,40 @@
     --bg-sidebar: #FBFBFA;
     --bg-input: #F7F6F3;
 
-    /* Notion Typography / Ink Hierarchy */
-    --text-primary: #37352F;
-    --text-secondary: #787774;
-    --text-tertiary: #9B9A97;
-    --text-placeholder: #9B9A97;
+    /* Notion Typography / High-Contrast Ink Hierarchy (WCAG AAA Compliant) */
+    --text-primary: #201F1D;
+    --text-secondary: #5A5852;
+    --text-tertiary: #6E6B65;
+    --text-placeholder: #787774;
 
     /* Hairline Dividers (1px only) */
     --border-hairline: rgba(55, 53, 47, 0.09);
-    --border-subtle: rgba(55, 53, 47, 0.14);
+    --border-subtle: rgba(55, 53, 47, 0.16);
     --border-focus: #2383E2;
 
     /* Notion Single Accent & Ratings */
     --accent-blue: #2383E2;
     --accent-blue-hover: #1b6ec2;
-    --star-amber: #E9A23B;
+    --star-amber: #D97706;
 
-    /* Notion Soft Pastel Tags */
-    --tag-gray-bg: #E3E2E0;
-    --tag-gray-text: #37352F;
-    --tag-blue-bg: #D3E5EF;
-    --tag-blue-text: #183B56;
-    --tag-green-bg: #DBEDDB;
-    --tag-green-text: #1C3829;
-    --tag-orange-bg: #FADEC9;
-    --tag-orange-text: #49290E;
-    --tag-red-bg: #FFE2DD;
-    --tag-red-text: #5D1715;
-    --tag-yellow-bg: #FDECC8;
-    --tag-yellow-text: #402C1B;
+    /* Brand Fallbacks for Legacy References */
+    --brand-navy-900: #0b2545;
+    --brand-navy-800: #134074;
+    --brand-gold-500: #d97706;
+
+    /* Notion Soft Pastel Tags (High Contrast Ink on Soft Tint) */
+    --tag-gray-bg: #EAE9E7;
+    --tag-gray-text: #201F1D;
+    --tag-blue-bg: #DCEAF4;
+    --tag-blue-text: #0E365C;
+    --tag-green-bg: #DBEEDB;
+    --tag-green-text: #134D27;
+    --tag-orange-bg: #FAE2CE;
+    --tag-orange-text: #6B270C;
+    --tag-red-bg: #FCE0DC;
+    --tag-red-text: #781816;
+    --tag-yellow-bg: #FBECC3;
+    --tag-yellow-text: #633306;
 
     /* Geometry: 6px buttons/inputs, 8px cards, no heavy pill containers */
     --radius-btn: 6px;
@@ -403,14 +408,17 @@ hr, .notion-divider {
     width: 24px;
     height: 24px;
     border-radius: var(--radius-avatar);
-    background-color: var(--bg-subtle);
-    border: 1px solid var(--border-hairline);
-    color: var(--text-primary);
+    background-color: #134074 !important;
+    border: 1px solid rgba(19, 64, 116, 0.2);
+    color: #FFFFFF !important;
     font-size: 11px;
     font-weight: 600;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
+    text-transform: uppercase;
 }
 
 .notion-dropdown-menu {
@@ -480,31 +488,42 @@ hr, .notion-divider {
 
 /* Ghost Button: Transparent, Gray Hover Fill */
 .btn-ghost,
-.btn-notion-ghost,
-.btn-outline-secondary {
+.btn-notion-ghost {
     background-color: transparent !important;
     color: var(--text-secondary) !important;
     border: none !important;
 }
 .btn-ghost:hover,
-.btn-notion-ghost:hover,
-.btn-outline-secondary:hover {
+.btn-notion-ghost:hover {
     background-color: var(--bg-hover) !important;
     color: var(--text-primary) !important;
 }
 
 /* Subtle Outlined Secondary Button */
+.btn-outline-secondary,
 .btn-outline-primary,
 .btn-notion-secondary {
-    background-color: transparent !important;
+    background-color: var(--bg-canvas) !important;
     color: var(--text-primary) !important;
     border: 1px solid var(--border-subtle) !important;
 }
+.btn-outline-secondary:hover,
 .btn-outline-primary:hover,
 .btn-notion-secondary:hover {
     background-color: var(--bg-hover) !important;
     color: var(--text-primary) !important;
-    border-color: rgba(55, 53, 47, 0.24) !important;
+    border-color: rgba(55, 53, 47, 0.28) !important;
+}
+
+/* Secondary Solid Button */
+.btn-secondary {
+    background-color: var(--tag-gray-bg) !important;
+    color: var(--tag-gray-text) !important;
+    border: 1px solid var(--border-hairline) !important;
+}
+.btn-secondary:hover {
+    background-color: #DAD8D5 !important;
+    color: var(--text-primary) !important;
 }
 
 /* Small Button Variant */
@@ -528,24 +547,47 @@ hr, .notion-divider {
 
 /* Success Button (Subtle green or primary) */
 .btn-success {
-    background-color: #2F7A4D !important;
+    background-color: #1E663B !important;
     color: #FFFFFF !important;
     border: none !important;
 }
 .btn-success:hover {
-    background-color: #24633E !important;
+    background-color: #17522F !important;
+    color: #FFFFFF !important;
 }
 
-/* Danger Button (Subtle red) */
+/* Warning Button */
+.btn-warning {
+    background-color: var(--tag-yellow-bg) !important;
+    color: var(--tag-yellow-text) !important;
+    border: 1px solid rgba(99, 51, 6, 0.2) !important;
+}
+.btn-warning:hover {
+    background-color: #F8DC9B !important;
+    color: #451A03 !important;
+}
+
+/* Danger Solid Button */
+.btn-danger {
+    background-color: #C5221F !important;
+    color: #FFFFFF !important;
+    border: none !important;
+}
+.btn-danger:hover {
+    background-color: #A51A18 !important;
+    color: #FFFFFF !important;
+}
+
+/* Danger Outline Button */
 .btn-outline-danger {
     background-color: transparent !important;
-    color: #C81E1E !important;
-    border: 1px solid rgba(200, 30, 30, 0.3) !important;
+    color: #C5221F !important;
+    border: 1px solid rgba(197, 34, 31, 0.35) !important;
 }
 .btn-outline-danger:hover {
-    background-color: #FDE8E8 !important;
-    color: #9B1C1C !important;
-    border-color: rgba(200, 30, 30, 0.5) !important;
+    background-color: #FCE0DC !important;
+    color: #781816 !important;
+    border-color: rgba(197, 34, 31, 0.6) !important;
 }
 
 /* Disabled State */
@@ -636,10 +678,10 @@ hr, .notion-divider {
     gap: 4px;
     font-size: 12px;
     font-weight: 500;
-    line-height: 1;
-    padding: 3px 7px;
+    line-height: 1.2;
+    padding: 3px 8px;
     border-radius: var(--radius-tag);
-    border: none;
+    border: 1px solid transparent;
     white-space: nowrap;
     text-transform: none;
     letter-spacing: normal;
@@ -648,40 +690,66 @@ hr, .notion-divider {
 .notion-tag-gray, .badge.bg-light, .badge.bg-secondary {
     background-color: var(--tag-gray-bg) !important;
     color: var(--tag-gray-text) !important;
+    border-color: rgba(55, 53, 47, 0.12) !important;
 }
 
 .notion-tag-blue, .badge.bg-primary, .badge.bg-info {
     background-color: var(--tag-blue-bg) !important;
     color: var(--tag-blue-text) !important;
+    border-color: rgba(14, 54, 92, 0.18) !important;
 }
 
 .notion-tag-green, .badge.bg-success {
     background-color: var(--tag-green-bg) !important;
     color: var(--tag-green-text) !important;
+    border-color: rgba(19, 77, 39, 0.18) !important;
 }
 
 .notion-tag-orange, .badge.bg-warning {
     background-color: var(--tag-orange-bg) !important;
     color: var(--tag-orange-text) !important;
+    border-color: rgba(107, 39, 12, 0.18) !important;
 }
 
 .notion-tag-red, .badge.bg-danger {
     background-color: var(--tag-red-bg) !important;
     color: var(--tag-red-text) !important;
+    border-color: rgba(120, 24, 22, 0.18) !important;
 }
 
-/* Urgency Badges */
+.badge.bg-white {
+    background-color: var(--bg-canvas) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-subtle) !important;
+}
+
+/* Base Urgency Badges */
+.badge-due {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.2;
+    padding: 3px 8px;
+    border-radius: var(--radius-tag);
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
 .badge-due-safe {
     background-color: var(--tag-green-bg) !important;
     color: var(--tag-green-text) !important;
+    border-color: rgba(19, 77, 39, 0.18) !important;
 }
 .badge-due-warning {
     background-color: var(--tag-yellow-bg) !important;
     color: var(--tag-yellow-text) !important;
+    border-color: rgba(99, 51, 6, 0.18) !important;
 }
 .badge-due-urgent {
     background-color: var(--tag-red-bg) !important;
     color: var(--tag-red-text) !important;
+    border-color: rgba(120, 24, 22, 0.18) !important;
 }
 
 /* ========================================================
@@ -743,6 +811,34 @@ hr, .notion-divider {
     font-size: 12px;
     color: var(--text-secondary);
     margin-top: 2px;
+}
+
+/* Librarian Section Cards */
+.section-card {
+    background: var(--bg-canvas) !important;
+    border: 1px solid var(--border-hairline) !important;
+    border-radius: var(--radius-card) !important;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: var(--transition-fast);
+}
+.section-card:hover {
+    border-color: var(--border-subtle) !important;
+    box-shadow: var(--shadow-hover) !important;
+}
+.section-header {
+    padding: 12px 16px;
+    background: var(--bg-canvas) !important;
+    border-bottom: 1px solid var(--border-hairline) !important;
+    color: var(--text-primary);
+}
+.section-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 /* Notion Book Card */
@@ -1001,6 +1097,65 @@ hr, .notion-divider {
     color: var(--text-primary) !important;
     box-shadow: 0 1px 2px rgba(0,0,0,0.06);
     font-weight: 600;
+}
+
+/* ========================================================
+   MODALS (Clean Notion Dropdown Canvas & Hairlines)
+   ======================================================== */
+
+.modal-content {
+    background-color: var(--bg-canvas) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-card) !important;
+    box-shadow: var(--shadow-dropdown) !important;
+    color: var(--text-primary) !important;
+}
+
+.modal-header {
+    background-color: var(--bg-canvas) !important;
+    border-bottom: 1px solid var(--border-hairline) !important;
+    padding: 14px 18px !important;
+}
+
+.modal-header .modal-title {
+    color: var(--text-primary) !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+}
+
+.modal-body {
+    background-color: var(--bg-canvas) !important;
+    padding: 18px !important;
+    color: var(--text-primary) !important;
+}
+
+.modal-footer {
+    background-color: var(--bg-sidebar) !important;
+    border-top: 1px solid var(--border-hairline) !important;
+    padding: 12px 18px !important;
+}
+
+/* ========================================================
+   BREADCRUMBS
+   ======================================================== */
+
+.breadcrumb {
+    margin-bottom: 0;
+    font-size: 13px;
+}
+.breadcrumb-item a {
+    color: var(--text-secondary) !important;
+    text-decoration: none;
+}
+.breadcrumb-item a:hover {
+    color: var(--text-primary) !important;
+}
+.breadcrumb-item.active {
+    color: var(--text-primary) !important;
+    font-weight: 500;
+}
+.breadcrumb-item + .breadcrumb-item::before {
+    color: var(--text-tertiary);
 }
 
 /* ========================================================

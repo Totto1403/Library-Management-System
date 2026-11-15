@@ -12,13 +12,13 @@
         <p class="text-secondary mb-0">Curriculum section governance, digital asset inventory, and student loan oversight.</p>
     </div>
     <div class="d-flex gap-2 mt-3 mt-md-0">
-        <button type="button" class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#addSectionModal">
+        <button type="button" class="btn btn-notion-primary btn-sm px-3" data-bs-toggle="modal" data-bs-target="#addSectionModal">
             <i class="bi bi-folder-plus me-1"></i> Add Academic Section
         </button>
-        <a href="{{ url_for('process_request_page') }}" class="btn btn-gold position-relative text-dark fw-bold shadow-sm">
+        <a href="{{ url_for('process_request_page') }}" class="btn btn-outline-secondary btn-sm px-3 position-relative">
             <i class="bi bi-inbox-fill me-1"></i> Request Queue
             {% if pending_requests_count > 0 %}
-            <span class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle tabular-nums">
+            <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle tabular-nums">
                 {{ pending_requests_count }}
             </span>
             {% endif %}
@@ -98,15 +98,15 @@
 
 <!-- Pending Requests Alert Banner -->
 {% if pending_requests_count > 0 %}
-<div class="alert alert-warning border shadow-sm rounded-4 p-3 d-flex align-items-center justify-content-between mb-4">
+<div class="alert alert-warning p-3 d-flex align-items-center justify-content-between mb-4">
     <div class="d-flex align-items-center gap-3">
-        <i class="bi bi-bell-fill fs-3 text-warning"></i>
+        <i class="bi bi-bell-fill fs-4 text-warning"></i>
         <div>
-            <div class="fw-bold text-dark">You have <span class="tabular-nums">{{ pending_requests_count }}</span> pending book borrowing request(s) awaiting review</div>
-            <small class="text-secondary">Students cannot access their requested courseware until approved.</small>
+            <div class="fw-semibold text-dark">You have <span class="tabular-nums">{{ pending_requests_count }}</span> pending book borrowing request(s) awaiting review</div>
+            <div class="text-secondary small">Students cannot access their requested courseware until approved.</div>
         </div>
     </div>
-    <a href="{{ url_for('process_request_page') }}" class="btn btn-warning btn-sm fw-bold text-dark px-3">
+    <a href="{{ url_for('process_request_page') }}" class="btn btn-warning btn-sm px-3">
         Review Queue <i class="bi bi-arrow-right ms-1"></i>
     </a>
 </div>
@@ -117,11 +117,11 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
             <h4 class="fw-bold mb-0">
-                <i class="bi bi-collection text-primary me-2"></i>Curriculum Sections Management
+                <i class="bi bi-collection text-secondary me-2"></i>Curriculum Sections Management
             </h4>
-            <small class="text-muted">Organize, modify, and manage subject disciplines</small>
+            <div class="text-secondary small">Organize, modify, and manage subject disciplines</div>
         </div>
-        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSectionModal">
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#addSectionModal">
             <i class="bi bi-plus-circle me-1"></i> New Section
         </button>
     </div>
@@ -132,10 +132,10 @@
             <div class="section-card">
                 <div class="section-header d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center gap-2">
-                        <i class="bi {{ section.icon }} fs-4 text-warning"></i>
-                        <span class="fw-bold text-white fs-6">{{ section.name }}</span>
+                        <i class="bi {{ section.icon }} fs-5 text-secondary"></i>
+                        <span class="fw-semibold text-dark fs-6">{{ section.name }}</span>
                     </div>
-                    <span class="badge rounded-pill bg-white text-dark tabular-nums">{{ section.book_count }} e-Books</span>
+                    <span class="notion-tag notion-tag-gray tabular-nums">{{ section.book_count }} e-Books</span>
                 </div>
                 <div class="section-body">
                     <p class="text-muted small mb-3">
@@ -166,9 +166,9 @@
         <!-- Edit Section Modal -->
         <div class="modal fade" id="editSectionModal{{ section.id }}" tabindex="-1" aria-labelledby="editSecLabel{{ section.id }}" aria-hidden="true">
             <div class="modal-dialog">
-                <div class="modal-content rounded-4 border-0 shadow">
-                    <div class="modal-header bg-light">
-                        <h5 class="modal-title fw-bold" id="editSecLabel{{ section.id }}">Edit Section</h5>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editSecLabel{{ section.id }}">Edit Section</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <form action="{{ url_for('edit_section', section_id=section.id) }}" method="post">
@@ -192,7 +192,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="modal-footer bg-light">
+                        <div class="modal-footer">
                             <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
                             <button type="submit" class="btn btn-primary btn-sm px-3">Update Section</button>
                         </div>
@@ -207,9 +207,9 @@
 <!-- Modal: Add New Section -->
 <div class="modal fade" id="addSectionModal" tabindex="-1" aria-labelledby="addSectionModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content rounded-4 border-0 shadow">
-            <div class="modal-header bg-light">
-                <h5 class="modal-title fw-bold" id="addSectionModalLabel">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addSectionModalLabel">
                     <i class="bi bi-folder-plus text-primary me-2"></i>Add Academic Section
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -235,7 +235,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="modal-footer bg-light">
+                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary btn-sm px-4">Create Section</button>
                 </div>

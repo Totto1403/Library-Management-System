@@ -61,17 +61,15 @@
                         <tr>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
-                                    <div class="bg-light text-primary rounded-2 p-1 text-center border" style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;">
-                                        <i class="bi bi-file-earmark-pdf fs-5"></i>
-                                    </div>
+                                    <span class="book-card-doc-icon fs-5"><i class="bi bi-file-earmark-pdf"></i></span>
                                     <div>
-                                        <div class="fw-bold text-dark">{{ loan.book.title }}</div>
-                                        <small class="text-secondary"><i class="bi bi-person me-1"></i>{{ loan.book.author }}</small>
+                                        <div class="fw-semibold text-dark">{{ loan.book.title }}</div>
+                                        <div class="text-secondary small"><i class="bi bi-person me-1"></i>{{ loan.book.author }}</div>
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                <span class="badge bg-light text-dark border">{{ loan.book.section.name }}</span>
+                                <span class="notion-tag notion-tag-gray">{{ loan.book.section.name }}</span>
                             </td>
                             <td>
                                 <span class="tabular-nums text-dark">{{ loan.issue_date.strftime('%d %b %Y') if loan.issue_date else 'N/A' }}</span>
@@ -148,13 +146,13 @@
                         {% for req in pending_requests %}
                         <tr>
                             <td>
-                                <div class="fw-bold text-dark">{{ req.book.title }}</div>
-                                <small class="text-secondary">{{ req.book.author }}</small>
+                                <div class="fw-semibold text-dark">{{ req.book.title }}</div>
+                                <div class="text-secondary small">{{ req.book.author }}</div>
                             </td>
-                            <td><span class="badge bg-light text-dark border">{{ req.book.section.name }}</span></td>
+                            <td><span class="notion-tag notion-tag-gray">{{ req.book.section.name }}</span></td>
                             <td><span class="tabular-nums text-dark">{{ req.request_date.strftime('%d %b %Y, %H:%M') }}</span></td>
                             <td>
-                                <span class="badge bg-warning text-dark">
+                                <span class="notion-tag notion-tag-orange">
                                     <i class="bi bi-clock-history me-1"></i> Awaiting Librarian Approval
                                 </span>
                             </td>
@@ -211,22 +209,22 @@
                             </td>
                             <td>
                                 {% if hist.status == 'returned' %}
-                                    <span class="badge bg-info text-dark">
+                                    <span class="notion-tag notion-tag-blue">
                                         <i class="bi bi-arrow-return-left me-1"></i> Returned
                                     </span>
                                 {% elif hist.status == 'revoked' %}
-                                    <span class="badge bg-danger" title="{{ hist.rejection_reason or 'Access revoked' }}">
+                                    <span class="notion-tag notion-tag-red" title="{{ hist.rejection_reason or 'Access revoked' }}">
                                         <i class="bi bi-slash-circle me-1"></i> Auto-Revoked (Expired)
                                     </span>
                                     {% if hist.rejection_reason %}
-                                    <small class="d-block text-muted mt-1" style="font-size: 0.75rem;">{{ hist.rejection_reason }}</small>
+                                    <small class="d-block text-secondary mt-1" style="font-size: 0.75rem;">{{ hist.rejection_reason }}</small>
                                     {% endif %}
                                 {% elif hist.status == 'rejected' %}
-                                    <span class="badge bg-secondary">
+                                    <span class="notion-tag notion-tag-gray">
                                         <i class="bi bi-x-circle me-1"></i> Request Declined
                                     </span>
                                     {% if hist.rejection_reason %}
-                                    <small class="d-block text-muted mt-1" style="font-size: 0.75rem;">{{ hist.rejection_reason }}</small>
+                                    <small class="d-block text-secondary mt-1" style="font-size: 0.75rem;">{{ hist.rejection_reason }}</small>
                                     {% endif %}
                                 {% endif %}
                             </td>
@@ -242,11 +240,11 @@
                                     </div>
                                     <small class="text-secondary d-block fst-italic">"{{ fb.comment }}"</small>
                                 {% else %}
-                                    <span class="text-muted small">No review yet</span>
+                                    <span class="text-tertiary small">No review yet</span>
                                 {% endif %}
                             </td>
                             <td class="text-end">
-                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#feedbackModal{{ hist.book_id }}">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#feedbackModal{{ hist.book_id }}">
                                     <i class="bi bi-pencil-square me-1"></i> {% if fb %}Edit Review{% else %}Leave Review{% endif %}
                                 </button>
                             </td>
@@ -255,9 +253,9 @@
                         <!-- Feedback Modal -->
                         <div class="modal fade" id="feedbackModal{{ hist.book_id }}" tabindex="-1" aria-labelledby="modalLabel{{ hist.book_id }}" aria-hidden="true">
                             <div class="modal-dialog">
-                                <div class="modal-content rounded-4 border-0 shadow">
-                                    <div class="modal-header bg-light">
-                                        <h5 class="modal-title fw-bold" id="modalLabel{{ hist.book_id }}">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="modalLabel{{ hist.book_id }}">
                                             Rate & Review: {{ hist.book.title }}
                                         </h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -279,7 +277,7 @@
                                                 <textarea name="comment" rows="3" class="form-control" placeholder="Share your feedback on the book content, examples, and readability...">{{ fb.comment if fb else '' }}</textarea>
                                             </div>
                                         </div>
-                                        <div class="modal-footer bg-light">
+                                        <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
                                             <button type="submit" class="btn btn-primary btn-sm px-3">Save Review</button>
                                         </div>
