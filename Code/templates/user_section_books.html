@@ -3,97 +3,85 @@
 {% block title %}{{ section.name }} - Courseware{% endblock %}
 
 {% block content %}
-<!-- Breadcrumb & Back -->
+<!-- Back to Dashboard -->
 <div class="mb-3">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ url_for('user_dashboard') }}" class="text-decoration-none"><i class="bi bi-house-door me-1"></i> Dashboard</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{ section.name }}</li>
-        </ol>
-    </nav>
+    <a href="{{ url_for('user_dashboard') }}" class="text-secondary small text-decoration-none">
+        &larr; Back to Dashboard
+    </a>
 </div>
 
-<!-- Section Header Banner -->
-<div class="card border-0 rounded-3 p-4 mb-4 text-white" style="background: linear-gradient(135deg, #0b2545 0%, #134074 100%); border-bottom: 3px solid #d97706;">
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-        <div>
-            <div class="d-flex align-items-center gap-2 mb-2">
-                <i class="bi {{ section.icon }} fs-3 text-warning"></i>
-                <h2 class="fw-bold mb-0 text-white">{{ section.name }}</h2>
-            </div>
-            <p class="mb-0 text-white lead" style="color: #e2e8f0; max-width: 800px; font-size: 0.95rem;">
-                {{ section.description }}
-            </p>
-        </div>
-        <div class="text-md-end">
-            <span class="badge bg-white text-dark px-3 py-2 rounded-2 border">
-                <i class="bi bi-journal-check me-1 text-primary"></i> {{ books|length }} e-Books Available
-            </span>
-        </div>
+<!-- Section Header -->
+<div class="mb-4">
+    <div class="d-flex align-items-center gap-2 mb-1">
+        <i class="bi {{ section.icon }} text-secondary" style="font-size: 20px;"></i>
+        <h1 class="notion-h1 mb-0">{{ section.name }}</h1>
+    </div>
+    <p class="text-secondary mb-2" style="max-width: 720px;">
+        {{ section.description or 'Academic discipline curriculum section.' }}
+    </p>
+    <div class="text-secondary small tabular-nums">
+        {{ books|length }} e-books available
     </div>
 </div>
 
+<hr class="notion-divider">
+
 <!-- Books in Section -->
 {% if books %}
-<div class="row g-4">
+<div class="row g-3">
     {% for book in books %}
     {% set issue = user_status_map.get(book.id) %}
     <div class="col-lg-4 col-md-6">
-        <div class="book-card">
-            <div class="book-card-cover">
-                <i class="bi bi-file-earmark-pdf book-icon"></i>
-                <span class="badge bg-light text-dark position-absolute top-0 end-0 m-2">{{ book.language }}</span>
+        <div class="book-card notion-book-card">
+            <div class="book-card-top">
+                <span class="book-card-doc-icon"><i class="bi bi-file-earmark-text"></i></span>
+                <span class="notion-tag notion-tag-gray">{{ book.language }}</span>
             </div>
-            <div class="book-card-body">
-                <h5 class="book-card-title">{{ book.title }}</h5>
-                <div class="book-card-author">
-                    <i class="bi bi-person me-1"></i>{{ book.author }}
-                </div>
-                <p class="book-card-desc">
-                    {{ book.content }}
-                </p>
-                <div class="book-card-meta">
-                    <span class="tabular-nums"><i class="bi bi-file-text me-1"></i>{{ book.pages }} pages</span>
-                    <span><i class="bi bi-bookmark me-1"></i>{{ book.edition }}</span>
-                    <span>
-                        <span class="star-rating">
-                            <i class="bi bi-star-fill"></i>
-                        </span>
-                        <strong class="tabular-nums">{{ book.average_rating }}</strong> <span class="tabular-nums">({{ book.ratings_count }})</span>
-                    </span>
-                </div>
+            <div class="book-card-title" title="{{ book.title }}">{{ book.title }}</div>
+            <div class="book-card-author">{{ book.author }}</div>
+            <div class="book-card-meta">
+                <span class="tabular-nums">{{ book.pages }} pages</span>
+                <span>
+                    {% if book.ratings_count > 0 %}
+                        <span class="notion-star">★</span><span class="tabular-nums">{{ book.average_rating }}</span>
+                    {% else %}
+                        <span class="text-tertiary">No ratings yet</span>
+                    {% endif %}
+                </span>
+            </div>
 
-                <!-- Action Button based on Quota & Loan State -->
+            <!-- Action Buttons -->
+            <div class="mt-3">
                 {% if issue and issue.status == 'issued' %}
-                    <div class="d-flex gap-2 mt-auto">
-                        <a href="{{ url_for('view_pdf', book_id=book.id) }}" class="btn btn-success btn-sm w-75">
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('view_pdf', book_id=book.id) }}" class="btn btn-notion-secondary btn-sm flex-grow-1">
                             <i class="bi bi-book me-1"></i> Read Online
                         </a>
-                        <form action="{{ url_for('return_book', issue_id=issue.id) }}" method="post" class="w-25" onsubmit="return confirm('Confirm returning {{ book.title }}?');">
-                            <button type="submit" class="btn btn-outline-danger btn-sm w-100" title="Return Book">
+                        <form action="{{ url_for('return_book', issue_id=issue.id) }}" method="post" onsubmit="return confirm('Confirm returning {{ book.title }}?');">
+                            <button type="submit" class="btn btn-ghost btn-sm" title="Return Book">
                                 <i class="bi bi-arrow-return-left"></i>
                             </button>
                         </form>
                     </div>
                 {% elif issue and issue.status == 'pending' %}
-                    <div class="d-flex gap-2 mt-auto">
-                        <button class="btn btn-warning btn-sm w-75 text-dark" disabled>
-                            <i class="bi bi-clock-history me-1"></i> Request Pending
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-ghost btn-sm flex-grow-1" disabled>
+                            <i class="bi bi-clock me-1"></i> Request Pending
                         </button>
-                        <form action="{{ url_for('cancel_request', issue_id=issue.id) }}" method="post" class="w-25">
-                            <button type="submit" class="btn btn-outline-secondary btn-sm w-100" title="Cancel Request">
+                        <form action="{{ url_for('cancel_request', issue_id=issue.id) }}" method="post">
+                            <button type="submit" class="btn btn-ghost btn-sm" title="Cancel Request">
                                 <i class="bi bi-x-circle"></i>
                             </button>
                         </form>
                     </div>
                 {% elif not user.can_request_book %}
-                    <button class="btn btn-secondary btn-sm w-100 mt-auto" disabled title="5-book limit reached (issued + pending)">
-                        <i class="bi bi-slash-circle me-1"></i> Quota Exceeded (5/5 Limit)
+                    <button class="btn btn-ghost btn-sm w-100" disabled title="5-book limit reached">
+                        <i class="bi bi-slash-circle me-1"></i> Quota Full
                     </button>
                 {% else %}
-                    <form action="{{ url_for('request_book', book_id=book.id) }}" method="post" class="mt-auto">
-                        <button type="submit" class="btn btn-primary btn-sm w-100">
-                            <i class="bi bi-send-plus me-1"></i> Request e-Book
+                    <form action="{{ url_for('request_book', book_id=book.id) }}" method="post">
+                        <button type="submit" class="btn btn-notion-primary btn-sm w-100">
+                            Request e-Book
                         </button>
                     </form>
                 {% endif %}
@@ -103,11 +91,11 @@
     {% endfor %}
 </div>
 {% else %}
-<div class="card border-0 shadow-sm p-5 text-center rounded-4 bg-white">
-    <i class="bi bi-journal-x fs-1 text-muted mb-3"></i>
-    <h4 class="text-secondary">No e-Books in this Section yet</h4>
-    <p class="text-muted small">The librarian has not uploaded courseware for this subject discipline yet.</p>
-    <a href="{{ url_for('user_dashboard') }}" class="btn btn-outline-primary btn-sm mx-auto">
+<div class="notion-box p-4 text-center my-4">
+    <i class="bi bi-journal-x fs-3 text-secondary mb-2 d-block"></i>
+    <div class="fw-semibold text-dark mb-1">No e-books in this section yet</div>
+    <div class="text-secondary small mb-3">Courseware for this curriculum discipline will be uploaded shortly.</div>
+    <a href="{{ url_for('user_dashboard') }}" class="btn btn-notion-secondary btn-sm mx-auto">
         Back to Dashboard
     </a>
 </div>

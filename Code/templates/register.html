@@ -5,67 +5,49 @@
 {% block content %}
 <div class="row justify-content-center py-4">
     <div class="col-lg-5 col-md-8">
-        <div class="card border rounded-3 overflow-hidden shadow-sm">
-            <!-- Header Banner -->
-            <div class="p-4 text-center text-white" style="background: linear-gradient(135deg, #0b2545 0%, #134074 100%); border-bottom: 3px solid #d97706;">
-                <img src="{{ url_for('static', filename='IITM_logo.png') }}" alt="IIT Madras Logo" class="brand-logo mb-3" style="height: 48px; background: #fff; padding: 3px 6px; border-radius: 4px;">
-                <h3 class="fw-bold mb-1 text-white">Student Registration</h3>
-                <p class="small mb-0" style="color: #cbd5e1;">Create your IITM digital library account</p>
+        <div class="card border rounded-3 p-4 p-md-5" style="border-color: var(--border-hairline) !important;">
+            <div class="text-center mb-4">
+                <img src="{{ url_for('static', filename='IITM_logo.png') }}" alt="IIT Madras Logo" class="mb-2" style="height: 38px;">
+                <h2 class="notion-h2 mb-1">Create student account</h2>
+                <p class="text-secondary small mb-0">Join the IIT Madras Digital Library portal</p>
             </div>
 
-            <div class="p-4 p-md-5 bg-white">
-                <form method="post" action="{{ url_for('register') }}">
-                    <div class="mb-3">
-                        <label for="full_name" class="form-label fw-semibold text-secondary small">Full Name</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-person-badge text-muted"></i></span>
-                            <input type="text" class="form-control border-start-0" id="full_name" name="full_name" placeholder="e.g. John Doe" required autofocus>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="username" class="form-label fw-semibold text-secondary small">Roll Number / Username</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
-                            <input type="text" class="form-control border-start-0" id="username" name="username" placeholder="e.g. 22f2000805" required>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="email" class="form-label fw-semibold text-secondary small">IITM Student Email</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
-                            <input type="email" class="form-control border-start-0" id="email" name="email" placeholder="e.g. 22f2000805@study.iitm.ac.in">
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="password" class="form-label fw-semibold text-secondary small">Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
-                            <input type="password" class="form-control border-start-0" id="password" name="password" placeholder="At least 4 characters" required>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="confirm_password" class="form-label fw-semibold text-secondary small">Confirm Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-shield-check text-muted"></i></span>
-                            <input type="password" class="form-control border-start-0" id="confirm_password" name="confirm_password" placeholder="Re-enter password" required>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm mb-3">
-                        <i class="bi bi-person-check-fill me-1"></i> Register Student Account
-                    </button>
-                </form>
-
-                <div class="text-center small text-secondary">
-                    Already registered? 
-                    <a href="{{ url_for('login', role='user') }}" class="text-primary fw-bold text-decoration-none">
-                        Sign In here
-                    </a>
+            <form method="post" action="{{ url_for('register') }}">
+                <div class="mb-3">
+                    <label for="full_name" class="form-label text-secondary small fw-medium mb-1">Full Name</label>
+                    <input type="text" class="form-control" id="full_name" name="full_name" placeholder="e.g. John Doe" required autofocus>
                 </div>
+
+                <div class="mb-3">
+                    <label for="username" class="form-label text-secondary small fw-medium mb-1">Roll Number / Username</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="e.g. 22f2000805" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label text-secondary small fw-medium mb-1">IITM Student Email</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="e.g. 22f2000805@study.iitm.ac.in">
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label text-secondary small fw-medium mb-1">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="At least 4 characters" required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="confirm_password" class="form-label text-secondary small fw-medium mb-1">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Re-enter password" required>
+                </div>
+
+                <button type="submit" class="btn btn-notion-primary w-100 mb-3">
+                    Register Student Account
+                </button>
+            </form>
+
+            <div class="text-center small text-secondary">
+                Already registered? 
+                <a href="{{ url_for('login', role='user') }}" class="text-primary fw-medium text-decoration-none">
+                    Sign In here &rarr;
+                </a>
             </div>
         </div>
     </div>

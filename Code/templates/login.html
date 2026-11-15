@@ -5,71 +5,63 @@
 {% block content %}
 <div class="row justify-content-center py-4">
     <div class="col-lg-5 col-md-8">
-        <div class="card border rounded-3 overflow-hidden shadow-sm">
-            <!-- Header Banner -->
-            <div class="p-4 text-center text-white" style="background: linear-gradient(135deg, #0b2545 0%, #134074 100%); border-bottom: 3px solid #d97706;">
-                <img src="{{ url_for('static', filename='IITM_logo.png') }}" alt="IIT Madras Logo" class="brand-logo mb-3" style="height: 48px; background: #fff; padding: 3px 6px; border-radius: 4px;">
-                <h3 class="fw-bold mb-1 text-white">Library Portal Sign In</h3>
-                <p class="small mb-0" style="color: #cbd5e1;">Indian Institute of Technology Madras</p>
+        <div class="card border rounded-3 p-4 p-md-5" style="border-color: var(--border-hairline) !important;">
+            <div class="text-center mb-4">
+                <img src="{{ url_for('static', filename='IITM_logo.png') }}" alt="IIT Madras Logo" class="mb-2" style="height: 38px;">
+                <h2 class="notion-h2 mb-1">Sign in</h2>
+                <p class="text-secondary small mb-0">IIT Madras Digital Library Management System</p>
             </div>
 
-            <div class="p-4 p-md-5 bg-white">
-                <!-- Role Selection Tabs -->
-                <ul class="nav nav-pills nav-fill mb-4 p-1 rounded-3 bg-light border" id="loginRoleTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link {% if active_tab != 'librarian' %}active fw-bold{% endif %} py-2" id="user-tab" type="button" onclick="setRole('user')">
-                            <i class="bi bi-mortarboard-fill me-1"></i> Student User
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link {% if active_tab == 'librarian' %}active fw-bold{% endif %} py-2" id="librarian-tab" type="button" onclick="setRole('librarian')">
-                            <i class="bi bi-shield-lock-fill me-1"></i> Librarian
-                        </button>
-                    </li>
-                </ul>
-
-                <form method="post" action="{{ url_for('login') }}" id="loginForm">
-                    <input type="hidden" name="role" id="selectedRole" value="{{ active_tab if active_tab == 'librarian' else 'user' }}">
-                    
-                    <div class="mb-3">
-                        <label for="username" class="form-label fw-semibold text-secondary small">Username / Student ID</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
-                            <input type="text" class="form-control border-start-0" id="username" name="username" placeholder="Enter username" required autofocus>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <label for="password" class="form-label fw-semibold text-secondary small mb-1">Password</label>
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
-                            <input type="password" class="form-control border-start-0" id="password" name="password" placeholder="Enter password" required>
-                            <button class="btn btn-outline-secondary border-start-0" type="button" onclick="togglePasswordVisibility()">
-                                <i class="bi bi-eye" id="toggleIcon"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm mb-3">
-                        <i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Library
+            <!-- Role Selection Tabs -->
+            <ul class="nav nav-pills nav-fill mb-4 p-1 rounded-2" style="background-color: var(--bg-input);" id="loginRoleTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if active_tab != 'librarian' %}active{% endif %}" id="user-tab" type="button" onclick="setRole('user')">
+                        Student User
                     </button>
-                </form>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if active_tab == 'librarian' %}active{% endif %}" id="librarian-tab" type="button" onclick="setRole('librarian')">
+                        Librarian
+                    </button>
+                </li>
+            </ul>
+
+            <form method="post" action="{{ url_for('login') }}" id="loginForm">
+                <input type="hidden" name="role" id="selectedRole" value="{{ active_tab if active_tab == 'librarian' else 'user' }}">
+                
+                <div class="mb-3">
+                    <label for="username" class="form-label text-secondary small fw-medium mb-1">Username / Student ID</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required autofocus>
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label text-secondary small fw-medium mb-1">Password</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+                        <button class="btn btn-ghost" type="button" onclick="togglePasswordVisibility()" style="border: 1px solid var(--border-hairline) !important; border-left: none !important;">
+                            <i class="bi bi-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-notion-primary w-100 mb-3">
+                    Sign in
+                </button>
+            </form>
 
                 <!-- Quick Demo Fill Pills for Evaluator -->
-                <div class="p-3 bg-light rounded-3 border mb-4">
-                    <div class="small fw-bold text-secondary mb-2">
-                        <i class="bi bi-lightning-charge-fill text-warning me-1"></i>Quick Demo Auto-Fill:
+                <div class="notion-box p-3 mb-4">
+                    <div class="text-secondary small fw-medium mb-2">
+                        Quick Demo Auto-Fill:
                     </div>
                     <div class="d-flex flex-wrap gap-2">
-                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="fillCredentials('Totto', '1403', 'user')">
+                        <button type="button" class="btn btn-notion-secondary btn-sm" onclick="fillCredentials('Totto', '1403', 'user')">
                             Student: Totto
                         </button>
-                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="fillCredentials('student1', 'student123', 'user')">
+                        <button type="button" class="btn btn-notion-secondary btn-sm" onclick="fillCredentials('student1', 'student123', 'user')">
                             Student: student1
                         </button>
-                        <button type="button" class="btn btn-sm btn-outline-dark" onclick="fillCredentials('librarian', 'password', 'librarian')">
+                        <button type="button" class="btn btn-notion-secondary btn-sm" onclick="fillCredentials('librarian', 'password', 'librarian')">
                             Librarian: Chief
                         </button>
                     </div>
@@ -77,8 +69,8 @@
 
                 <div class="text-center small text-secondary">
                     Don't have a student account? 
-                    <a href="{{ url_for('register') }}" class="text-primary fw-bold text-decoration-none">
-                        Register here
+                    <a href="{{ url_for('register') }}" class="text-primary fw-medium text-decoration-none">
+                        Register here &rarr;
                     </a>
                 </div>
             </div>

@@ -9,137 +9,116 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Custom Theme Stylesheet -->
+    <!-- Custom Theme Stylesheet (Notion Minimalist System) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     
     {% block extra_head %}{% endblock %}
 </head>
 <body>
 
-    <!-- Main Navigation Bar -->
-    <nav class="navbar navbar-expand-lg lms-navbar sticky-top">
+    <!-- Notion Minimal Navbar (56px, White Background, 1px Hairline) -->
+    <header class="notion-navbar">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('home') }}">
-                <img src="{{ url_for('static', filename='IITM_logo.png') }}" alt="IIT Madras Logo" class="brand-logo">
-                <span>IITM <span style="color: var(--brand-gold-400);">Library</span></span>
+            <!-- Brand / Logo -->
+            <a class="notion-navbar-brand" href="{{ url_for('home') }}">
+                <img src="{{ url_for('static', filename='IITM_logo.png') }}" alt="IIT Madras Logo">
+                <span>IITM Library</span>
             </a>
 
-            <button class="navbar-toggler text-white border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-                <i class="bi bi-list fs-2"></i>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <!-- Search Form in Navbar -->
-                <form class="d-flex mx-auto my-2 my-lg-0 search-bar-wrap w-50" action="{{ url_for('search') }}" method="get" role="search">
-                    <i class="bi bi-search text-muted ps-1"></i>
-                    <input type="text" name="q" placeholder="Search by title, author, or keyword..." value="{{ request.args.get('q', '') }}" aria-label="Search catalogue">
+            <!-- Compact Search Field (max 340px, light-gray fill, "/" shortcut hint) -->
+            <div class="notion-nav-search d-none d-md-block">
+                <form action="{{ url_for('search') }}" method="get" role="search">
+                    <span class="search-icon"><i class="bi bi-search"></i></span>
+                    <input type="text" id="navSearchInput" name="q" placeholder="Search..." value="{{ request.args.get('q', '') }}" aria-label="Search catalogue">
+                    <span class="kbd-hint"><kbd class="notion-kbd">/</kbd></span>
                 </form>
-
-                <ul class="navbar-nav ms-auto align-items-center gap-1">
-                    {% if current_user %}
-                        {% if current_user.is_librarian %}
-                            <!-- Librarian Nav Items -->
-                            <li class="nav-item">
-                                <a class="nav-link {% if request.endpoint == 'librarian_dashboard' %}active{% endif %}" href="{{ url_for('librarian_dashboard') }}">
-                                    <i class="bi bi-speedometer2 me-1"></i> Dashboard
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link position-relative {% if request.endpoint == 'process_request_page' %}active{% endif %}" href="{{ url_for('process_request_page') }}">
-                                    <i class="bi bi-inbox-fill me-1"></i> Requests
-                                    {% if pending_requests_count > 0 %}
-                                    <span class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle tabular-nums">
-                                        {{ pending_requests_count }}
-                                    </span>
-                                    {% endif %}
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {% if request.endpoint == 'librarian_users' %}active{% endif %}" href="{{ url_for('librarian_users') }}">
-                                    <i class="bi bi-people-fill me-1"></i> Students
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {% if request.endpoint == 'librarian_register' %}active{% endif %}" href="{{ url_for('librarian_register') }}">
-                                    <i class="bi bi-person-plus-fill me-1"></i> Add Admin
-                                </a>
-                            </li>
-                        {% else %}
-                            <!-- Student User Nav Items -->
-                            <li class="nav-item">
-                                <a class="nav-link {% if request.endpoint == 'user_dashboard' %}active{% endif %}" href="{{ url_for('user_dashboard') }}">
-                                    <i class="bi bi-grid-fill me-1"></i> Explore Sections
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {% if request.endpoint == 'user_my_books' %}active{% endif %}" href="{{ url_for('user_my_books') }}">
-                                    <i class="bi bi-book-half me-1"></i> My Books
-                                </a>
-                            </li>
-                            <li class="nav-item ms-lg-2">
-                                <div class="quota-pill" title="Maximum 5 active books (issued + pending)">
-                                    <i class="bi bi-collection-fill"></i> Quota: <span class="tabular-nums fw-bold ms-1">{{ active_user_quota }} / 5</span>
-                                </div>
-                            </li>
-                        {% endif %}
-
-                        <!-- User Profile Dropdown -->
-                        <li class="nav-item dropdown ms-lg-2">
-                            <a class="nav-link dropdown-toggle text-white d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style="width: 32px; height: 32px; font-size: 0.85rem; background-color: var(--brand-navy-800); border: 1px solid rgba(255, 255, 255, 0.2);">
-                                    {{ current_user.username[0].upper() }}
-                                </div>
-                                <span class="d-none d-md-inline">{{ current_user.full_name }}</span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
-                                <li class="px-3 py-2 border-bottom">
-                                    <div class="fw-bold text-dark">{{ current_user.full_name }}</div>
-                                    <small class="text-muted d-block">@{{ current_user.username }} &bull; {{ current_user.role|capitalize }}</small>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item py-2 text-danger" href="{{ url_for('logout') }}">
-                                        <i class="bi bi-box-arrow-right me-2"></i> Sign Out
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    {% else %}
-                        <!-- Unauthenticated Nav Items -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('login', role='user') }}">
-                                <i class="bi bi-person me-1"></i> Student Login
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('login', role='librarian') }}">
-                                <i class="bi bi-shield-lock me-1"></i> Librarian Portal
-                            </a>
-                        </li>
-                        <li class="nav-item ms-lg-2">
-                            <a class="btn btn-gold btn-sm px-3" href="{{ url_for('register') }}">
-                                <i class="bi bi-person-plus me-1"></i> Register
-                            </a>
-                        </li>
-                    {% endif %}
-                </ul>
             </div>
-        </div>
-    </nav>
 
-    <!-- Main Flash Messages -->
+            <!-- Right-Hand Text-Only Nav Links & User Profile -->
+            <nav class="notion-nav-links">
+                {% if current_user %}
+                    {% if current_user.is_librarian %}
+                        <!-- Librarian Links -->
+                        <a class="notion-nav-link {% if request.endpoint == 'librarian_dashboard' %}active{% endif %}" href="{{ url_for('librarian_dashboard') }}">
+                            Dashboard
+                        </a>
+                        <a class="notion-nav-link {% if request.endpoint == 'process_request_page' %}active{% endif %}" href="{{ url_for('process_request_page') }}">
+                            Requests
+                            {% if pending_requests_count > 0 %}
+                            <span class="notion-tag notion-tag-red tabular-nums ms-1">{{ pending_requests_count }}</span>
+                            {% endif %}
+                        </a>
+                        <a class="notion-nav-link {% if request.endpoint == 'librarian_users' %}active{% endif %}" href="{{ url_for('librarian_users') }}">
+                            Students
+                        </a>
+                        <a class="notion-nav-link {% if request.endpoint == 'librarian_register' %}active{% endif %}" href="{{ url_for('librarian_register') }}">
+                            Add Admin
+                        </a>
+                    {% else %}
+                        <!-- Student Links -->
+                        <a class="notion-nav-link {% if request.endpoint == 'user_dashboard' %}active{% endif %}" href="{{ url_for('user_dashboard') }}">
+                            Explore
+                        </a>
+                        <a class="notion-nav-link {% if request.endpoint == 'user_my_books' %}active{% endif %}" href="{{ url_for('user_my_books') }}">
+                            My Books
+                        </a>
+                        <!-- Inline Small Muted Quota Text -->
+                        <span class="notion-nav-quota" title="Maximum 5 active books (issued + pending)">
+                            <span class="tabular-nums">{{ active_user_quota }} of 5 borrowed</span>
+                        </span>
+                    {% endif %}
+
+                    <!-- User Profile Dropdown (First Name + Small Avatar Circle) -->
+                    <div class="dropdown ms-1">
+                        <button class="notion-user-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="notion-avatar-circle">
+                                {{ current_user.username[0].upper() }}
+                            </div>
+                            <span>{{ current_user.full_name.split(' ')[0] }}</span>
+                            <i class="bi bi-chevron-down" style="font-size: 10px; color: var(--text-tertiary);"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end notion-dropdown-menu">
+                            <li class="px-2 py-1 border-bottom mb-1" style="border-color: var(--border-hairline) !important;">
+                                <div class="fw-semibold text-dark" style="font-size: 13px;">{{ current_user.full_name }}</div>
+                                <div class="text-secondary" style="font-size: 12px;">@{{ current_user.username }} &bull; {{ current_user.role|capitalize }}</div>
+                            </li>
+                            <li>
+                                <a class="notion-dropdown-item text-danger" href="{{ url_for('logout') }}">
+                                    <i class="bi bi-box-arrow-right"></i> Log out
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <!-- Unauthenticated Text Links -->
+                    <a class="notion-nav-link" href="{{ url_for('login', role='user') }}">
+                        Student Login
+                    </a>
+                    <a class="notion-nav-link" href="{{ url_for('login', role='librarian') }}">
+                        Librarian
+                    </a>
+                    <a class="btn btn-notion-primary btn-sm ms-2" href="{{ url_for('register') }}">
+                        Register
+                    </a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Flash Messages (Quiet Notion Callout Style) -->
     <div class="container mt-3">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show shadow-sm d-flex align-items-center gap-2 border" role="alert">
+                    <div class="alert {% if category == 'success' %}alert-success{% elif category == 'danger' or category == 'error' %}alert-danger{% elif category == 'warning' %}alert-warning{% else %}notion-callout{% endif %} alert-dismissible fade show" role="alert">
                         {% if category == 'success' %}
-                            <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                            <i class="bi bi-check-circle text-success"></i>
                         {% elif category == 'danger' or category == 'error' %}
-                            <i class="bi bi-exclamation-octagon-fill text-danger fs-5"></i>
+                            <i class="bi bi-exclamation-circle text-danger"></i>
                         {% elif category == 'warning' %}
-                            <i class="bi bi-exclamation-triangle-fill text-warning fs-5"></i>
+                            <i class="bi bi-exclamation-triangle text-warning"></i>
                         {% else %}
-                            <i class="bi bi-info-circle-fill text-primary fs-5"></i>
+                            <i class="bi bi-info-circle text-secondary"></i>
                         {% endif %}
                         <div class="flex-grow-1">{{ message }}</div>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -149,25 +128,24 @@
         {% endwith %}
     </div>
 
-    <!-- Page Content -->
+    <!-- Page Content Workspace -->
     <main class="main-wrapper">
         <div class="container">
             {% block content %}{% endblock %}
         </div>
     </main>
 
-    <!-- Global Footer -->
-    <footer class="lms-footer">
+    <!-- Global Footer (Minimal & Quiet) -->
+    <footer class="notion-footer">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
-                    <div class="fw-bold text-white mb-1">
-                        <i class="bi bi-mortarboard me-1"></i> IIT Madras Online Degree Programme
-                    </div>
-                    <small>Modern Application Development 1 (MAD 1) &bull; Library Management System</small>
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div>
+                    <span>IIT Madras Online Degree Programme</span>
+                    <span class="mx-1">&bull;</span>
+                    <span>Modern Application Development 1</span>
                 </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <small>Built with Flask, Jinja2, SQLite & Bootstrap 5 &bull; UTF-8 Encoded</small>
+                <div>
+                    <span>Flask &bull; SQLite &bull; UTF-8</span>
                 </div>
             </div>
         </div>
@@ -175,6 +153,20 @@
 
     <!-- Bootstrap 5.3 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+    <!-- Minimal Keyboard Shortcut for "/" Search -->
+    <script>
+    document.addEventListener('keydown', function(e) {
+        if (e.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
+            var searchInput = document.getElementById('navSearchInput');
+            if (searchInput) {
+                e.preventDefault();
+                searchInput.focus();
+                searchInput.select();
+            }
+        }
+    });
+    </script>
     
     {% block extra_scripts %}{% endblock %}
 </body>

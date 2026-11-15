@@ -3,163 +3,119 @@
 {% block title %}Student Dashboard{% endblock %}
 
 {% block content %}
-<!-- Welcome Banner & Ergonomic 5-Book Quota Meter -->
-<div class="row align-items-center mb-4 g-3">
-    <div class="col-lg-7">
-        <h2 class="fw-bold mb-1 text-dark">
-            Welcome, {{ user.full_name }}
-        </h2>
-        <p class="text-secondary mb-0">Browse university courseware, request digital e-books, and monitor active borrowing loans.</p>
-    </div>
-    <div class="col-lg-5">
-        <!-- Visual 5-Slot Quota Meter Card -->
-        <div class="quota-tracker-card">
-            <div class="d-flex justify-content-between align-items-center mb-1">
-                <span class="small fw-bold text-secondary text-uppercase tracking-wider">
-                    <i class="bi bi-collection-fill me-1 text-primary"></i> Borrowing Quota
-                </span>
-                <span class="badge {% if user.active_quota_count >= 5 %}bg-danger{% else %}bg-primary{% endif %} px-2 py-1 tabular-nums">
-                    {{ user.active_quota_count }} / 5 Maximum
-                </span>
-            </div>
+<!-- Student Header & Inline Quota -->
+<div class="mb-4">
+    <h1 class="notion-h1">Welcome, {{ user.full_name }}</h1>
+    <p class="text-secondary mb-3">Browse university courseware and manage your reading list.</p>
 
-            <!-- 5-Segment Visual Slot Meter -->
-            <div class="quota-slots-meter" role="progressbar" aria-valuenow="{{ user.active_quota_count }}" aria-valuemin="0" aria-valuemax="5" aria-label="Book borrowing quota meter">
-                {% for slot_idx in range(5) %}
-                    {% if slot_idx < user.active_quota_count %}
-                        <div class="quota-slot {% if user.active_quota_count >= 5 %}slot-limit{% else %}slot-active{% endif %}" title="Occupied slot {{ slot_idx + 1 }}"></div>
-                    {% else %}
-                        <div class="quota-slot slot-empty" title="Available slot {{ slot_idx + 1 }}"></div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center small text-muted mt-2">
-                <span>
-                    {% if user.active_quota_count >= 5 %}
-                        <strong class="text-danger"><i class="bi bi-exclamation-circle-fill me-1"></i>Quota full. Return a book to request another.</strong>
-                    {% else %}
-                        <span><strong class="text-success tabular-nums">{{ 5 - user.active_quota_count }}</strong> slots available</span>
-                    {% endif %}
-                </span>
-                <a href="{{ url_for('user_my_books') }}" class="text-primary fw-bold text-decoration-none">
-                    My Books <i class="bi bi-chevron-right ms-1"></i>
-                </a>
-            </div>
+    <!-- Inline 4px Borrowing Quota Bar (No Boxed Card) -->
+    <div class="notion-quota-bar-wrapper">
+        <div class="d-flex align-items-center gap-2 mb-1" style="font-size: 13px; color: var(--text-secondary);">
+            <span class="tabular-nums fw-medium">{{ user.active_quota_count }} of 5 books borrowed</span>
+            {% if user.active_quota_count >= 5 %}
+                <span class="notion-tag notion-tag-red">Quota full</span>
+            {% else %}
+                <span class="text-tertiary">({{ 5 - user.active_quota_count }} slots remaining)</span>
+            {% endif %}
+            <a href="{{ url_for('user_my_books') }}" class="ms-auto" style="font-size: 13px;">View my books &rarr;</a>
+        </div>
+        <div class="notion-progress-track">
+            <div class="notion-progress-fill {% if user.active_quota_count >= 5 %}fill-limit{% endif %}" style="width: {{ (user.active_quota_count / 5.0) * 100 }}%;"></div>
         </div>
     </div>
 </div>
 
-<!-- Quick Search & Filter Bar -->
-<div class="card border p-3 rounded-3 mb-4 bg-white" style="border-color: var(--border-subtle) !important;">
-    <form action="{{ url_for('search') }}" method="get" class="row g-2 align-items-center" role="search">
-        <div class="col-md-8">
-            <div class="input-group">
-                <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
-                <input type="text" name="q" class="form-control border-start-0" placeholder="Search by book title, author, or keyword (e.g. Concurrency, Java, Operating Systems)...">
-            </div>
-        </div>
-        <div class="col-md-3">
-            <select name="section_id" class="form-select" aria-label="Filter by curriculum section">
-                <option value="">All Academic Sections</option>
-                {% for sec in sections %}
-                <option value="{{ sec.id }}">{{ sec.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-md-1">
-            <button type="submit" class="btn btn-primary w-100">
-                Search
-            </button>
-        </div>
-    </form>
-</div>
+<!-- Unified Search & Filter Field Group (No Outer Box Border) -->
+<form action="{{ url_for('search') }}" method="get" class="mb-5" role="search">
+    <div class="notion-field-group">
+        <span class="px-2 text-secondary" style="font-size: 13px;"><i class="bi bi-search"></i></span>
+        <input type="text" name="q" class="form-control" placeholder="Search courseware by title, author, or keyword (e.g. Concurrency, Java, Operating Systems)...">
+        <div class="field-divider"></div>
+        <select name="section_id" class="form-select" style="max-width: 220px;" aria-label="Filter by curriculum section">
+            <option value="">All Academic Sections</option>
+            {% for sec in sections %}
+            <option value="{{ sec.id }}">{{ sec.name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-notion-primary btn-sm ms-1 me-1">
+            Search
+        </button>
+    </div>
+</form>
 
-<!-- Academic Sections Grid -->
+<!-- Curriculum Sections Gallery -->
 <div class="mb-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="fw-bold mb-0">
-            <i class="bi bi-folder2-open text-primary me-2"></i>Curriculum Sections
-        </h4>
-        <span class="text-muted small tabular-nums">{{ sections|length }} Sections Available</span>
+        <h2 class="notion-h2 mb-0">Curriculum Sections</h2>
+        <span class="text-secondary small tabular-nums">{{ sections|length }} disciplines</span>
     </div>
 
-    <div class="row g-4">
+    <div class="row g-3">
         {% for section in sections %}
         <div class="col-md-6 col-lg-3">
-            <div class="section-card">
-                <div class="section-header d-flex justify-content-between align-items-center">
-                    <i class="bi {{ section.icon }} fs-3 text-warning"></i>
-                    <span class="badge rounded-pill bg-white text-dark tabular-nums">{{ section.book_count }} e-Books</span>
+            <a href="{{ url_for('user_section_books', section_id=section.id) }}" class="notion-section-card" title="{{ section.description }}">
+                <div class="notion-section-icon">
+                    <i class="bi {{ section.icon }}"></i>
                 </div>
-                <div class="section-body">
-                    <h5 class="fw-bold mb-2 text-dark">{{ section.name }}</h5>
-                    <p class="text-muted small mb-3">
-                        {{ section.description[:110] }}{% if section.description|length > 110 %}...{% endif %}
-                    </p>
-                    <a href="{{ url_for('user_section_books', section_id=section.id) }}" class="btn btn-outline-primary btn-sm w-100">
-                        Explore Books <i class="bi bi-arrow-right ms-1"></i>
-                    </a>
+                <div>
+                    <div class="notion-section-title">{{ section.name }}</div>
+                    <div class="notion-section-count tabular-nums">{{ section.book_count }} e-books</div>
                 </div>
-            </div>
+            </a>
         </div>
         {% endfor %}
     </div>
 </div>
 
+<hr class="notion-divider">
+
 <!-- Top Rated Courseware -->
 <div class="mb-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="fw-bold mb-0">
-            <i class="bi bi-star-fill text-warning me-2"></i>Top Rated Courseware
-        </h4>
-        <span class="text-muted small">Based on student feedback and reviews</span>
+        <h2 class="notion-h2 mb-0">Top Rated Courseware</h2>
+        <span class="text-secondary small">Curated by student feedback</span>
     </div>
 
-    <div class="row g-4">
+    <div class="row g-3">
         {% for book in top_rated_books %}
         {% set issue = active_book_ids.get(book.id) %}
         <div class="col-lg-3 col-md-6">
-            <div class="book-card">
-                <div class="book-card-cover">
-                    <i class="bi bi-file-earmark-pdf book-icon"></i>
-                    <span class="badge bg-light text-dark position-absolute top-0 end-0 m-2">{{ book.section.name.split('&')[0] }}</span>
+            <div class="book-card notion-book-card">
+                <div class="book-card-top">
+                    <span class="book-card-doc-icon"><i class="bi bi-file-earmark-text"></i></span>
+                    <span class="notion-tag notion-tag-gray">{{ book.section.name.split('&')[0].strip() }}</span>
                 </div>
-                <div class="book-card-body">
-                    <h5 class="book-card-title">{{ book.title }}</h5>
-                    <div class="book-card-author">
-                        <i class="bi bi-person me-1"></i>{{ book.author }}
-                    </div>
-                    <p class="book-card-desc">
-                        {{ book.content[:110] }}{% if book.content|length > 110 %}...{% endif %}
-                    </p>
-                    <div class="book-card-meta">
-                        <span class="tabular-nums"><i class="bi bi-file-text me-1"></i>{{ book.pages }} pages</span>
-                        <span>
-                            <span class="star-rating">
-                                <i class="bi bi-star-fill"></i>
-                            </span>
-                            <strong class="tabular-nums">{{ book.average_rating }}</strong> <span class="tabular-nums">({{ book.ratings_count }})</span>
-                        </span>
-                    </div>
+                <div class="book-card-title" title="{{ book.title }}">{{ book.title }}</div>
+                <div class="book-card-author">{{ book.author }}</div>
+                <div class="book-card-meta">
+                    <span class="tabular-nums">{{ book.pages }} pages</span>
+                    <span>
+                        {% if book.ratings_count > 0 %}
+                            <span class="notion-star">★</span><span class="tabular-nums">{{ book.average_rating }}</span>
+                        {% else %}
+                            <span class="text-tertiary">No ratings yet</span>
+                        {% endif %}
+                    </span>
+                </div>
 
-                    <!-- State-Aware Action Button based on User Loan Status & 5-Book Limit -->
+                <!-- State-Aware Action Button -->
+                <div class="mt-3">
                     {% if issue and issue.status == 'issued' %}
-                        <a href="{{ url_for('view_pdf', book_id=book.id) }}" class="btn btn-success btn-sm w-100 mt-auto">
+                        <a href="{{ url_for('view_pdf', book_id=book.id) }}" class="btn btn-notion-secondary btn-sm w-100">
                             <i class="bi bi-book me-1"></i> Read Online
                         </a>
                     {% elif issue and issue.status == 'pending' %}
-                        <button class="btn btn-warning btn-sm w-100 mt-auto text-dark" disabled>
-                            <i class="bi bi-clock-history me-1"></i> Request Pending
+                        <button class="btn btn-ghost btn-sm w-100" disabled>
+                            <i class="bi bi-clock me-1"></i> Request Pending
                         </button>
                     {% elif not user.can_request_book %}
-                        <button class="btn btn-secondary btn-sm w-100 mt-auto" disabled title="5-book limit reached">
-                            <i class="bi bi-slash-circle me-1"></i> Quota Full (5/5)
+                        <button class="btn btn-ghost btn-sm w-100" disabled title="5-book limit reached">
+                            <i class="bi bi-slash-circle me-1"></i> Quota Full
                         </button>
                     {% else %}
-                        <form action="{{ url_for('request_book', book_id=book.id) }}" method="post" class="mt-auto">
-                            <button type="submit" class="btn btn-primary btn-sm w-100">
-                                <i class="bi bi-send-plus me-1"></i> Request e-Book
+                        <form action="{{ url_for('request_book', book_id=book.id) }}" method="post">
+                            <button type="submit" class="btn btn-notion-primary btn-sm w-100">
+                                Request e-Book
                             </button>
                         </form>
                     {% endif %}
@@ -170,57 +126,54 @@
     </div>
 </div>
 
+<hr class="notion-divider">
+
 <!-- Recently Added e-Books -->
 <div class="mb-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="fw-bold mb-0">
-            <i class="bi bi-clock-history text-primary me-2"></i>Recently Added to Catalogue
-        </h4>
+        <h2 class="notion-h2 mb-0">Recently Added</h2>
+        <span class="text-secondary small">Latest catalog additions</span>
     </div>
 
-    <div class="row g-4">
+    <div class="row g-3">
         {% for book in recent_books %}
         {% set issue = active_book_ids.get(book.id) %}
         <div class="col-lg-3 col-md-6">
-            <div class="book-card">
-                <div class="book-card-cover">
-                    <i class="bi bi-file-earmark-pdf book-icon"></i>
-                    <span class="badge bg-light text-dark position-absolute top-0 end-0 m-2">{{ book.language }}</span>
+            <div class="book-card notion-book-card">
+                <div class="book-card-top">
+                    <span class="book-card-doc-icon"><i class="bi bi-file-earmark-text"></i></span>
+                    <span class="notion-tag notion-tag-blue">{{ book.language }}</span>
                 </div>
-                <div class="book-card-body">
-                    <h5 class="book-card-title">{{ book.title }}</h5>
-                    <div class="book-card-author">
-                        <i class="bi bi-person me-1"></i>{{ book.author }}
-                    </div>
-                    <p class="book-card-desc">
-                        {{ book.content[:110] }}{% if book.content|length > 110 %}...{% endif %}
-                    </p>
-                    <div class="book-card-meta">
-                        <span class="tabular-nums"><i class="bi bi-file-text me-1"></i>{{ book.pages }} pages</span>
-                        <span>
-                            <span class="star-rating">
-                                <i class="bi bi-star-fill"></i>
-                            </span>
-                            <strong class="tabular-nums">{{ book.average_rating }}</strong> <span class="tabular-nums">({{ book.ratings_count }})</span>
-                        </span>
-                    </div>
+                <div class="book-card-title" title="{{ book.title }}">{{ book.title }}</div>
+                <div class="book-card-author">{{ book.author }}</div>
+                <div class="book-card-meta">
+                    <span class="tabular-nums">{{ book.pages }} pages</span>
+                    <span>
+                        {% if book.ratings_count > 0 %}
+                            <span class="notion-star">★</span><span class="tabular-nums">{{ book.average_rating }}</span>
+                        {% else %}
+                            <span class="text-tertiary">No ratings yet</span>
+                        {% endif %}
+                    </span>
+                </div>
 
+                <div class="mt-3">
                     {% if issue and issue.status == 'issued' %}
-                        <a href="{{ url_for('view_pdf', book_id=book.id) }}" class="btn btn-success btn-sm w-100 mt-auto">
+                        <a href="{{ url_for('view_pdf', book_id=book.id) }}" class="btn btn-notion-secondary btn-sm w-100">
                             <i class="bi bi-book me-1"></i> Read Online
                         </a>
                     {% elif issue and issue.status == 'pending' %}
-                        <button class="btn btn-warning btn-sm w-100 mt-auto text-dark" disabled>
-                            <i class="bi bi-clock-history me-1"></i> Request Pending
+                        <button class="btn btn-ghost btn-sm w-100" disabled>
+                            <i class="bi bi-clock me-1"></i> Request Pending
                         </button>
                     {% elif not user.can_request_book %}
-                        <button class="btn btn-secondary btn-sm w-100 mt-auto" disabled>
-                            <i class="bi bi-slash-circle me-1"></i> Quota Full (5/5)
+                        <button class="btn btn-ghost btn-sm w-100" disabled>
+                            <i class="bi bi-slash-circle me-1"></i> Quota Full
                         </button>
                     {% else %}
-                        <form action="{{ url_for('request_book', book_id=book.id) }}" method="post" class="mt-auto">
-                            <button type="submit" class="btn btn-primary btn-sm w-100">
-                                <i class="bi bi-send-plus me-1"></i> Request e-Book
+                        <form action="{{ url_for('request_book', book_id=book.id) }}" method="post">
+                            <button type="submit" class="btn btn-notion-primary btn-sm w-100">
+                                Request e-Book
                             </button>
                         </form>
                     {% endif %}
